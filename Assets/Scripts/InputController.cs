@@ -16,7 +16,7 @@ public class InputController : MonoBehaviour {
 			RaycastHit hit;
 			Ray ray = camera.ScreenPointToRay(Input.mousePosition);
 
-			if (Physics.Raycast(ray, out hit, 100f, 1 << 8)) {
+			if (Physics.Raycast(ray, out hit, 100f, ~(1 << 8))) {
 				GameObject objectHit = hit.transform.gameObject;
 				ClickListener clickListener = objectHit.GetComponent<ClickListener> ();
 				if (clickListener != null) {
