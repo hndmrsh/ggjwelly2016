@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 //using Random = UnityEngine.Random;
 
@@ -15,12 +16,15 @@ public class WorkerController : MonoBehaviour {
 	public int maxRules = 6;
 	public int moveSpeed = 10; // Move speed factor - change if too fast or too slow
 	public int scoreAmount;
+	public float timeToWaitAtLocation = 2f;
 
 	private int nextPoint = 1; // Indexes into the point array (all of our destinations)
 	private Vector3 currentDestination; // The next destination we're headed to
 	private List<Vector3> wayPoints = new List<Vector3> (); // A list of points that we want to move towards
 	private List<Vector3> originalWayPoints = new List<Vector3>();
 	private float mapXSize, mapYSize;
+	private bool waiting = false;
+
 
 	[HideInInspector]public int routinesCompleted = 0;
 	[HideInInspector]public bool routineChanged = false;
@@ -51,13 +55,16 @@ public class WorkerController : MonoBehaviour {
 	void Update () 
 	{
 		// Move to currentPoint
-		if (nextPoint < wayPoints.Count) 
+		if (nextPoint < wayPoints.Count && waiting == false) 
 		{
 			transform.position = Vector3.MoveTowards(transform.position, currentDestination, Time.deltaTime * moveSpeed);
 
 			if ((Mathf.Abs(transform.position.x - currentDestination.x) < 0.1) && (Mathf.Abs(transform.position.z - currentDestination.z) < 0.1)) 
 			{
 				nextPoint++;
+				waiting = true;
+				StartCoroutine(WaitAtLocation ());
+
 
 				if (routineChanged == false) {
 					UpdateScore (scoreAmount);
@@ -73,6 +80,11 @@ public class WorkerController : MonoBehaviour {
 			}
 		}
 
+	}
+
+	IEnumerator WaitAtLocation() {
+		yield return new WaitForSeconds (timeToWaitAtLocation);
+		waiting = false;
 	}
 
 	private List<Vector2> GenerateRulesForCube() {
