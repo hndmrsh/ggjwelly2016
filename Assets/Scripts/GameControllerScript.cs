@@ -19,7 +19,7 @@ public class GameControllerScript : MonoBehaviour
 
 	private float previousTime = 0f; // Keeps track of difference between previous 'day' and total time. If > than interval, day has past
 	private float totalTime = 0f; // Keeps track of total time progressed
-	public float dayTimeInterval = 3f;
+	public float dayTimeInterval;
 
 	private int score = 0;
 
