@@ -4,10 +4,11 @@ using System.Collections;
 public class InputController : MonoBehaviour {
 
 	public Camera camera;
+	private GameControllerScript gameControllerScript;
 
 	// Use this for initialization
 	void Start () {
-	
+		gameControllerScript = GetComponent<GameControllerScript> ();
 	}
 
 	// Update is called once per frame
@@ -20,7 +21,11 @@ public class InputController : MonoBehaviour {
 				GameObject objectHit = hit.transform.gameObject;
 				ClickListener clickListener = objectHit.GetComponent<ClickListener> ();
 				if (clickListener != null) {
-					clickListener.OnClick ();
+					
+					var routineChanged = clickListener.OnClick ();
+
+					gameControllerScript.ObjectClickedByPlayer (routineChanged);
+
 				}
 			}
 
