@@ -26,6 +26,7 @@ public class WorkerController : MonoBehaviour {
 	private List<Vector3> originalWayPoints = new List<Vector3>();
 	private float mapXSize, mapYSize;
 	private bool waiting = false;
+	private float chanceToChangeRoutine = 0.1f;
 
 	public Employee Employee { get; set; }
 
@@ -62,6 +63,11 @@ public class WorkerController : MonoBehaviour {
 					UpdateScore (scoreAmount);
 				}
 
+				// Random chance to go off task
+				if (chanceToChangeRoutine > Random.value) {
+					// Do something
+				}
+
 				if (nextPoint >= wayPoints.Count) 
 				{
 					nextPoint = 0; // If we've gone outside the range, then return to the beginning
@@ -74,19 +80,20 @@ public class WorkerController : MonoBehaviour {
 
 	}
 
-	public void InitiateInProjectPhase() {
+	public void InitiateInProjectPhase(int workerCount) {
 //		wayPoints = ConvertToWayPoints(GenerateRulesForCube());
 		foreach (var obstacle in Employee.RitualSteps) {
 			wayPoints.Add (obstacle.targetLocation.position);
 		}
 
 		foreach (var originalWayPoint in wayPoints) {
-				originalWayPoints.Add (originalWayPoint);
-			}
+			originalWayPoints.Add (originalWayPoint);
+		}
 
 			//		transform.position = wayPoints [0]; // Set the starting transform of this object
 
-			currentDestination = wayPoints [nextPoint];
+		currentDestination = wayPoints [nextPoint];
+		chanceToChangeRoutine += (workerCount / 100); // More employees = bigger chance of being distracted
 	}
 
 	IEnumerator WaitAtLocation() {

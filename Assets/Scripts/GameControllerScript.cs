@@ -21,7 +21,7 @@ public class GameControllerScript : MonoBehaviour
 
 	private float previousTime = 0f; // Keeps track of difference between previous 'day' and total time. If > than interval, day has past
 	private float totalTime = 0f; // Keeps track of total time progressed
-	public float dayTimeInterval;
+	public float dayTimeInterval = 3f;
 
 
 	// Variables to keep track of the "level" or difficulty of project
@@ -53,12 +53,29 @@ public class GameControllerScript : MonoBehaviour
 
 		AddingWorker = false;
 
+		dayTimeInterval = 3f;
+
 		/*
 		interrupt = false;
 		StartCoroutine (time());
 		*/
 	}
 
+	void Update() {
+		if (projectFinished == false && phase == Phase.Project) {
+
+			totalTime = Time.time;
+
+			if (totalTime - previousTime > dayTimeInterval) {
+				previousTime = totalTime;
+				DayElapsed ();
+			}
+
+		}
+
+	}
+
+	/*
 	IEnumerator time() 
 	{
 
@@ -71,14 +88,6 @@ public class GameControllerScript : MonoBehaviour
 				DayElapsed();
 			}
 
-			/*
-			if (timeSinceLast > dayTimeInterval) 
-			{
-				timeSinceLast = 0;
-				uiController.DayElapsed ();
-				Debug.Log ("Time Since Last: " + timeSinceLast);
-			}
-			*/
 
 			yield return new WaitForSeconds (Random.Range (waitTimeMin, waitTimeMax));
 
@@ -90,8 +99,9 @@ public class GameControllerScript : MonoBehaviour
 			interrupt = false;
 		}
 
-
 	}
+
+
 
 	private void InterruptRoutine() 
 	{
@@ -108,6 +118,9 @@ public class GameControllerScript : MonoBehaviour
 			}
 		}
 	}
+
+	*/
+
 
 	// Remove this method?
 	public void ObjectClickedByPlayer(bool routineChanged) 
@@ -157,13 +170,26 @@ public class GameControllerScript : MonoBehaviour
 		phase = Phase.Project;
 
 		foreach (WorkerController w in employeeWorkerControllers) {
-			w.InitiateInProjectPhase ();
+			w.InitiateInProjectPhase (employeeWorkerControllers.Count);
 		}
 
 		DetermineDatesForNewProject (); // Sets up the dates for the new project
 
-		interrupt = false;
-		StartCoroutine (time());
+		//interrupt = false;
+		//StartCoroutine (time());
+
+		/*
+		while (projectFinished == false && phase == Phase.Project) {
+			
+			totalTime = Time.time;
+
+			if (totalTime - previousTime > dayTimeInterval) {
+				previousTime = totalTime;
+				DayElapsed ();
+			}
+		}
+		*/
+
 	}
 
 	public void AddWorkerClicked() {
