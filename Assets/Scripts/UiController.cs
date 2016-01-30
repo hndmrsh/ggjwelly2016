@@ -79,6 +79,7 @@ public class UiController : MonoBehaviour {
 	 */
 	private void SetProjectCurrentDate (DateTime date) {
 		currentDate.text = FormatDate (date);
+		Debug.Log ("SetProjectCurrrentDate called");
 	}
 
 	private string FormatDate(DateTime date) {
@@ -119,6 +120,7 @@ public class UiController : MonoBehaviour {
 	public void DayElapsed() {
 		this.timeElapsed ++;
 		SetProjectCurrentDate(this.startDate.AddDays (timeElapsed));
+		Debug.Log ("Day Elasped Method called");
 	}
 	#endregion
 		
