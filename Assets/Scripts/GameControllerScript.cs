@@ -8,7 +8,7 @@ public class GameControllerScript : MonoBehaviour
 	public enum Phase {
 		Hiring, Project
 	}
-
+		
 	public bool interrupt;
 	public GameObject cubePrefab;
 	public int numberOfCubes = 4;
@@ -23,22 +23,18 @@ public class GameControllerScript : MonoBehaviour
 
 	private List<GameObject> cubes = new List<GameObject> ();
 
+
+	private bool addingWorker;
+	private Employee workerBeingCreated;
+
 	// Use this for initialization
 	void Start () 
 	{
-
-		for (int i = 0; i < numberOfCubes; i++) 
-		{
-			var toInstantiate = Instantiate (cubePrefab); // Create a certain number of objects
-			cubes.Add(toInstantiate);
-		}
+		phase = Phase.Hiring;
+		addingWorker = false;
 
 		interrupt = false;
-
 		StartCoroutine (time());
-
-		phase = Phase.Hiring;
-
 	}
 
 	IEnumerator time() 
@@ -99,5 +95,30 @@ public class GameControllerScript : MonoBehaviour
 	public void StartProjectClicked() {
 		uiController.ShowProjectPhase ();
 		phase = Phase.Project;
+	}
+
+	public void AddWorkerClicked() {
+		SetAddingWorker (true);
+
+		workerBeingCreated = new Employee (EmployeeGenerator.GetRandomName (), EmployeeGenerator.GetRandomOccupation ());
+		uiController.ShowEmployeeData (workerBeingCreated);
+	}
+
+	private void GenerateWorkerDetails() {
+		
+	}
+
+	public void DoneClicked() {
+		SetAddingWorker (false);
+		uiController.HideEmployeeData ();
+	}
+
+	private void SetAddingWorker(bool addingWorker) {
+		this.addingWorker = addingWorker;
+		if (addingWorker) {
+			uiController.EnterAddingWorkerMode ();
+		} else {
+			uiController.ExitAddingWorkerMode ();
+		}
 	}
 }

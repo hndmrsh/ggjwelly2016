@@ -8,6 +8,11 @@ public class UiController : MonoBehaviour {
 	public GameObject hiringPhaseLayer;
 	public GameObject projectPhaseLayer;
 
+	public Button addWorkerButton;
+	public Button doneAddingWorkerButton;
+	public Button startProjectButton;
+	public Text doneAddingWorkerButtonText;
+
 	public Text levelNumber;
 	public Text startDateText;
 	public Text dueDateHiring;
@@ -109,6 +114,14 @@ public class UiController : MonoBehaviour {
 		employeeGroup.SetActive (false);
 	}
 
+	public void SetAddWorkerDoneButtonCancels(bool cancels) {
+		if (cancels) {
+			doneAddingWorkerButtonText.text = "CANCEL";
+		} else {
+			doneAddingWorkerButtonText.text = "DONE";
+		}
+	}
+
 	#region Update display
 	public void UpdateScoreDisplay(int currentScore) {
 		float fractComplete = Math.Min(1f, ((float)currentScore / (float)targetScore));
@@ -134,6 +147,20 @@ public class UiController : MonoBehaviour {
 		projectPhaseLayer.SetActive (true);
 		hiringPhaseLayer.SetActive (false);
 	}
+
+	public void EnterAddingWorkerMode () {
+		startProjectButton.gameObject.SetActive (false);
+		addWorkerButton.gameObject.SetActive (false);
+		doneAddingWorkerButton.gameObject.SetActive (true);
+
+		SetAddWorkerDoneButtonCancels (true);
+	}
+
+	public void ExitAddingWorkerMode () {
+		startProjectButton.gameObject.SetActive (true);
+		addWorkerButton.gameObject.SetActive (true);
+		doneAddingWorkerButton.gameObject.SetActive (false);
+	}
 	#endregion
 
 
@@ -142,13 +169,6 @@ public class UiController : MonoBehaviour {
 		SetLevelInformation (1, 1000, new DateTime(2016, 07, 14), new DateTime(2016, 09, 03));
 
 		SetProjectEstimatedCompletionDate (new DateTime(2016, 08, 28));
-
-		Employee e = new Employee ("John Doe", "Pet book librarian");
-		e.AddRitualStep(new RitualStep("Read book", Vector2.zero));
-		e.AddRitualStep(new RitualStep("Have nap", Vector2.zero));
-
-		//HideEmployeeData ();
-		ShowEmployeeData(e);
 	}
 
 	#endregion
