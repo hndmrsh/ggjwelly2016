@@ -30,7 +30,6 @@ public class WorkerController : MonoBehaviour {
 
 	public Employee Employee { get; set; }
 
-	[HideInInspector]public int routinesCompleted = 0;
 	[HideInInspector]public bool routineChanged = false;
 
 	// Use this for initialization
@@ -66,12 +65,12 @@ public class WorkerController : MonoBehaviour {
 				// Random chance to go off task
 				if (chanceToChangeRoutine > Random.value) {
 					// Do something
+					routineChanged = true;
 				}
 
 				if (nextPoint >= wayPoints.Count) 
 				{
 					nextPoint = 0; // If we've gone outside the range, then return to the beginning
-					routinesCompleted++;
 				} 
 
 				currentDestination = wayPoints [nextPoint];
@@ -101,41 +100,6 @@ public class WorkerController : MonoBehaviour {
 		yield return new WaitForSeconds (timeToWaitHere);
 		waiting = false;
 	}
-//
-//	private List<Vector2> GenerateRulesForCube() {
-//		int numRules = Random.Range (minRules, maxRules);
-//		List<Vector2> list = new List<Vector2> ();
-//
-//		Vector2 startPos = new Vector2 (Random.value * (mapXSize - 1f) + 1f, Random.value * (mapYSize - 1f) + 1f);
-//		list.Add (startPos);
-//
-//		Vector2 curPos = startPos;
-//
-//		for (int r = 0; r < numRules; r++) {
-//			float xDiff = RandomDiff (mapXSize);
-//			float x = curPos.x + xDiff;
-//			float yDiff = RandomDiff (mapYSize);
-//			float y = curPos.y + yDiff;
-//
-//			// ensure x and y are within bounds
-//			if (x > mapXSize - 1f || x < 1f) {
-//				x -= xDiff * 2;
-//			}
-//
-//			if (y > mapYSize - 1f || y < 1f) {
-//				y -= yDiff * 2;
-//			}
-//
-//			curPos = new Vector2 (x, y);
-//			list.Add (curPos);
-//		}
-//
-//		return list;
-//	}
-//
-	//private float RandomDiff(float mapSize) {
-	//	return Random.value * (mapSize * 0.8f) - (mapSize * 0.2f);
-	//}
 
 	private float RandomDiff(float mapSize) {
 		return Random.value * mapSize;
@@ -166,7 +130,7 @@ public class WorkerController : MonoBehaviour {
 	{
 		wayPoints = originalWayPoints;
 		routineChanged = false;
-		routinesCompleted = 0;
+		//routinesCompleted = 0;
 	}
 
 	private void UpdateScore(int scoreAmount) 
@@ -176,10 +140,12 @@ public class WorkerController : MonoBehaviour {
 
 	public void OnClick() 
 	{
+		// Must do this first, as ReturnToOriginalRoutine reverts routineChanged to false
+		gameControllerScript.ObjectClickedByPlayer (routineChanged);
+
 		if (routineChanged) {
 			ReturnToOriginalRoutine ();
 		} 
-		gameControllerScript.ObjectClickedByPlayer (routineChanged);
 	}
 
 }

@@ -55,10 +55,6 @@ public class GameControllerScript : MonoBehaviour
 
 		dayTimeInterval = 3f;
 
-		/*
-		interrupt = false;
-		StartCoroutine (time());
-		*/
 	}
 
 	void Update() {
@@ -74,66 +70,17 @@ public class GameControllerScript : MonoBehaviour
 		}
 
 	}
-
-	/*
-	IEnumerator time() 
-	{
-
-		while (projectFinished == false && phase == Phase.Project) 
-		{
-			totalTime = Time.time;
-
-			if (totalTime - previousTime > dayTimeInterval) {
-				previousTime = totalTime;
-				DayElapsed();
-			}
-
-
-			yield return new WaitForSeconds (Random.Range (waitTimeMin, waitTimeMax));
-
-			interrupt = true;
-			InterruptRoutine ();
-
-			yield return new WaitForSeconds (1f);
-
-			interrupt = false;
-		}
-
-	}
-
-
-
-	private void InterruptRoutine() 
-	{
-		if (phase == Phase.Project) {
-			if (employeeWorkerControllers.Count > 0) {
-				int index = Random.Range (0, employeeWorkerControllers.Count);
-
-				WorkerController objectToInterrupt = employeeWorkerControllers [index];
-
-				if (objectToInterrupt.routinesCompleted >= numberOfRoutinesBeforeChange) {
-					objectToInterrupt.ChangeRoutineDrastically ();
-					//Maybe do change Minor Routine
-				}
-			}
-		}
-	}
-
-	*/
-
-
-	// Remove this method?
+		
+	// Remove this method? We need the onclick in the worker controller method, not here
 	public void ObjectClickedByPlayer(bool routineChanged) 
 	{
-		if (phase == Phase.Project) {
+		if (phase == Phase.Project && projectFinished == false) {
 			if (routineChanged == true) {
 				UpdateScore (10);
 			} else {
 				UpdateScore (-10);
 			}
 		}
-
-		//Debug.Log ("Clicked on object. Score now: " + score.ToString());
 
 	}
 
@@ -174,21 +121,6 @@ public class GameControllerScript : MonoBehaviour
 		}
 
 		DetermineDatesForNewProject (); // Sets up the dates for the new project
-
-		//interrupt = false;
-		//StartCoroutine (time());
-
-		/*
-		while (projectFinished == false && phase == Phase.Project) {
-			
-			totalTime = Time.time;
-
-			if (totalTime - previousTime > dayTimeInterval) {
-				previousTime = totalTime;
-				DayElapsed ();
-			}
-		}
-		*/
 
 	}
 
