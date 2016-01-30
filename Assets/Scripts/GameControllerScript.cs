@@ -12,6 +12,8 @@ public class GameControllerScript : MonoBehaviour
 		
 	public bool interrupt;
 
+	public Obstacle[] allObstacles;
+
 	public GameObject cubePrefab;
 	public GameObject pointMarkerPrefab;
 	public Transform pointMarkerGroup;
