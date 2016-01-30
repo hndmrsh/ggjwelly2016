@@ -125,12 +125,12 @@ public class UiController : MonoBehaviour {
 
 
 	#region Phase switching
-	void ShowHiringPhase() {
+	public void ShowHiringPhase() {
 		projectPhaseLayer.SetActive (false);
 		hiringPhaseLayer.SetActive (true);
 	}
 
-	void ShowProjectPhase() {
+	public void ShowProjectPhase() {
 		projectPhaseLayer.SetActive (true);
 		hiringPhaseLayer.SetActive (false);
 	}

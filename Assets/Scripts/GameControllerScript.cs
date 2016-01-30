@@ -5,6 +5,10 @@ using System.Collections.Generic;
 public class GameControllerScript : MonoBehaviour 
 {
 
+	public enum Phase {
+		Hiring, Project
+	}
+
 	public bool interrupt;
 	public GameObject cubePrefab;
 	public int numberOfCubes = 4;
@@ -14,6 +18,8 @@ public class GameControllerScript : MonoBehaviour
 	public UiController uiController;
 
 	private int score = 0;
+
+	private Phase phase;
 
 	private List<GameObject> cubes = new List<GameObject> ();
 
@@ -28,11 +34,13 @@ public class GameControllerScript : MonoBehaviour
 		}
 
 		interrupt = false;
+
 		StartCoroutine (time());
+
+		phase = Phase.Hiring;
 
 	}
 
-	// Update is called once per frame
 	IEnumerator time() 
 	{
 
@@ -86,5 +94,10 @@ public class GameControllerScript : MonoBehaviour
 	public void UpdateScore(int scoreAmount) {
 		score += scoreAmount;
 		uiController.UpdateScoreDisplay (score);
+	}
+
+	public void StartProjectClicked() {
+		uiController.ShowProjectPhase ();
+		phase = Phase.Project;
 	}
 }
