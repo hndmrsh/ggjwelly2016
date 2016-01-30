@@ -9,9 +9,11 @@ public class UiController : MonoBehaviour {
 	public GameObject projectPhaseLayer;
 
 	public Text levelNumber;
-	public Text startDate;
-	public Text dueDate;
+	public Text startDateText;
+	public Text dueDateHiring;
+	public Text dueDateProject;
 	public Text estimateDate;
+	public Text currentDate;
 
 	public GameObject employeeGroup;
 	public Text employeeName;
@@ -23,26 +25,60 @@ public class UiController : MonoBehaviour {
 	public Text progressText;
 	public Image progressBar;
 
+	public const int targetScore = 1000;
+
 	private float ritualStepPrefabHeight;
+	private DateTime startDate;
+	private int timeToComplete;
+	private int timeElapsed;
 
-	private int targetScore;
+	void Start() {
+		ritualStepPrefabHeight = ritualStepPrefab.GetComponent<RectTransform> ().sizeDelta.y;
+		TestMethod ();
+	}
 
-	public void SetLevelInformation(int number, int targetScore) {
-		this.targetScore = targetScore;
+	void Update() {
+		if (Input.GetKeyDown (KeyCode.Z)) {
+			DayElapsed ();
+		}
+	}
+
+	public void SetLevelInformation(int number, int timeToComplete, DateTime projectStartDate, DateTime projectDeadline) {
+		SetProjectStartDate (projectStartDate);
+		SetProjectCurrentDate (projectStartDate);
+		SetProjectDueDate (projectDeadline);
+
+		this.timeToComplete = timeToComplete;
+		this.timeElapsed = 0;
 
 		levelNumber.text = "Level " + number;
 	}
 
-	public void SetProjectStartDate (DateTime date) {
-		startDate.text = FormatDate (date);
+	/** 
+	 * Use SetLevelInformation(...) instead.
+	 */
+	private void SetProjectStartDate (DateTime date) {
+		startDateText.text = FormatDate (date);
+		this.startDate = date;
 	}
 
-	public void SetProjectDueDate (DateTime date) {
-		dueDate.text = FormatDate (date);
+	/** 
+	 * Use SetLevelInformation(...) instead.
+	 */
+	private void SetProjectDueDate (DateTime date) {
+		dueDateHiring.text = FormatDate (date);
+		dueDateProject.text = FormatDate (date);
 	}
 
 	public void SetProjectEstimatedCompletionDate (DateTime date) {
 		estimateDate.text = FormatDate (date);
+	}
+
+	/**
+	 * Use DayElapsed() to set current date instead.
+	 */
+	private void SetProjectCurrentDate (DateTime date) {
+		currentDate.text = FormatDate (date);
 	}
 
 	private string FormatDate(DateTime date) {
@@ -73,16 +109,20 @@ public class UiController : MonoBehaviour {
 		employeeGroup.SetActive (false);
 	}
 
+	#region Update display
 	public void UpdateScoreDisplay(int currentScore) {
 		float fractComplete = Math.Min(1f, ((float)currentScore / (float)targetScore));
 		progressBar.fillAmount = fractComplete;
 		progressText.text = string.Format("{0:F0}%", fractComplete * 100f);
 	}
-		
-	void Start() {
-		ritualStepPrefabHeight = ritualStepPrefab.GetComponent<RectTransform> ().sizeDelta.y;
-		TestMethod ();
+
+	public void DayElapsed() {
+		this.timeElapsed ++;
+		SetProjectCurrentDate(this.startDate.AddDays (timeElapsed));
 	}
+	#endregion
+		
+
 
 	#region Phase switching
 	void ShowHiringPhase() {
@@ -99,10 +139,8 @@ public class UiController : MonoBehaviour {
 
 	#region TEMP TESTING START METHOD
 	void TestMethod() {
-		SetLevelInformation (1, 1000);
+		SetLevelInformation (1, 1000, new DateTime(2016, 07, 14), new DateTime(2016, 09, 03));
 
-		SetProjectStartDate (new DateTime(2016, 07, 14));
-		SetProjectDueDate (new DateTime(2016, 09, 03));
 		SetProjectEstimatedCompletionDate (new DateTime(2016, 08, 28));
 
 		Employee e = new Employee ("John Doe", "Pet book librarian");
