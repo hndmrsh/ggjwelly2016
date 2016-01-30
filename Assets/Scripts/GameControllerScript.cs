@@ -17,6 +17,10 @@ public class GameControllerScript : MonoBehaviour
 	public int numberOfRoutinesBeforeChange = 3;
 	public UiController uiController;
 
+	private float previousTime = 0f; // Keeps track of difference between previous 'day' and total time. If > than interval, day has past
+	private float totalTime = 0f; // Keeps track of total time progressed
+	public float dayTimeInterval;
+
 	private int score = 0;
 
 	private Phase phase;
@@ -42,13 +46,26 @@ public class GameControllerScript : MonoBehaviour
 
 		while (true) 
 		{
-			
+			totalTime = Time.time;
+
+			if (totalTime - previousTime > dayTimeInterval) {
+				previousTime = totalTime;
+				uiController.DayElapsed ();
+			}
+
+			/*
+			if (timeSinceLast > dayTimeInterval) 
+			{
+				timeSinceLast = 0;
+				uiController.DayElapsed ();
+				Debug.Log ("Time Since Last: " + timeSinceLast);
+			}
+			*/
+
 			yield return new WaitForSeconds (Random.Range (waitTimeMin, waitTimeMax));
 
 			interrupt = true;
 			InterruptRoutine ();
-
-			Debug.Log ("Interruption");
 
 			yield return new WaitForSeconds (1f);
 
@@ -69,7 +86,6 @@ public class GameControllerScript : MonoBehaviour
 		if (objectScript.routinesCompleted >= numberOfRoutinesBeforeChange) 
 		{
 			objectScript.ChangeRoutineDrastically ();
-			Debug.Log("Routine Changed");
 			//Maybe do change Minor Routine
 		}
 			
@@ -83,7 +99,7 @@ public class GameControllerScript : MonoBehaviour
 			score -= 5;
 		}
 
-		Debug.Log ("Clicked on object. Score now: " + score.ToString());
+		//Debug.Log ("Clicked on object. Score now: " + score.ToString());
 
 	}
 

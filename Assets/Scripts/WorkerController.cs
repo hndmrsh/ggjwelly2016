@@ -153,7 +153,6 @@ public class WorkerController : MonoBehaviour {
 		// Loop through the 2d coordinates array and place it into a 3d array
 		foreach (Vector2 point in points) 
 		{
-			Debug.Log ("x=" + point.x + ",y=" + point.y);
 			toReturn.Add (new Vector3 (point.x, transform.position.y, point.y));
 		}
 

@@ -31,9 +31,11 @@ public class UiController : MonoBehaviour {
 	public Image progressBar;
 
 	public const int targetScore = 1000;
+	private int currentGameScore = 0;
 
 	private float ritualStepPrefabHeight;
 	private DateTime startDate;
+	private DateTime dueDate;
 	private int timeToComplete;
 	private int timeElapsed;
 
@@ -73,6 +75,7 @@ public class UiController : MonoBehaviour {
 	private void SetProjectDueDate (DateTime date) {
 		dueDateHiring.text = FormatDate (date);
 		dueDateProject.text = FormatDate (date);
+		dueDate = date;
 	}
 
 	public void SetProjectEstimatedCompletionDate (DateTime date) {
@@ -88,6 +91,11 @@ public class UiController : MonoBehaviour {
 
 	private string FormatDate(DateTime date) {
 		return date.ToString ("dd MMM yyyy");
+	}
+
+	private bool CheckIfPastDueDate(DateTime currentDate, DateTime dueDate) {
+		Debug.Log ("You Failed!");
+		return currentDate > dueDate;
 	}
 
 	public void ShowEmployeeData (Employee employee) {
@@ -124,14 +132,26 @@ public class UiController : MonoBehaviour {
 
 	#region Update display
 	public void UpdateScoreDisplay(int currentScore) {
+		currentGameScore = currentScore;
 		float fractComplete = Math.Min(1f, ((float)currentScore / (float)targetScore));
 		progressBar.fillAmount = fractComplete;
 		progressText.text = string.Format("{0:F0}%", fractComplete * 100f);
 	}
 
+	private void CheckIfProjectComplete()
+	{
+		if (currentGameScore > targetScore) {
+			Debug.Log ("You finished the project!");
+			// Placeholder - will need something here
+		}
+
+
+	}
+
 	public void DayElapsed() {
 		this.timeElapsed ++;
 		SetProjectCurrentDate(this.startDate.AddDays (timeElapsed));
+		CheckIfPastDueDate (startDate, dueDate);
 	}
 	#endregion
 		
@@ -166,7 +186,7 @@ public class UiController : MonoBehaviour {
 
 	#region TEMP TESTING START METHOD
 	void TestMethod() {
-		SetLevelInformation (1, 1000, new DateTime(2016, 07, 14), new DateTime(2016, 09, 03));
+		SetLevelInformation (1, 1000, new DateTime(2016, 07, 14), new DateTime(2016, 07, 16));
 
 		SetProjectEstimatedCompletionDate (new DateTime(2016, 08, 28));
 	}

@@ -12,9 +12,6 @@ public class RulesGenerator : MonoBehaviour {
 		mapYSize = scale.y;
 
 		List<Vector2> list = GenerateRulesForCube ();
-		foreach (Vector2 rule in list) {
-			Debug.Log ("x=" + rule.x + ",y=" + rule.y);
-		}
 	}
 
 	List<Vector2> GenerateRulesForCube() {
