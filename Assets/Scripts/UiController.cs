@@ -18,7 +18,7 @@ public class UiController : MonoBehaviour {
 	public Text dueDateHiring;
 	public Text dueDateProject;
 	public Text estimateDate;
-	public Text currentDate;
+	public Text currentDateText;
 
 	public GameObject employeeGroup;
 	public Text employeeName;
@@ -36,12 +36,13 @@ public class UiController : MonoBehaviour {
 	private float ritualStepPrefabHeight;
 	private DateTime startDate;
 	private DateTime dueDate;
+	private DateTime currentDateTime;
 	private int timeToComplete;
 	private int timeElapsed;
 
 	void Start() {
 		ritualStepPrefabHeight = ritualStepPrefab.GetComponent<RectTransform> ().sizeDelta.y;
-		TestMethod ();
+		//TestMethod ();
 	}
 
 	void Update() {
@@ -59,6 +60,17 @@ public class UiController : MonoBehaviour {
 		this.timeElapsed = 0;
 
 		levelNumber.text = "Level " + number;
+	}
+
+	public void SetProjectLevelInformation(int projectLevelNumber, int timeToComplete, DateTime projectStartDate, DateTime projectDeadline) {
+		SetProjectStartDate (projectStartDate);
+		SetProjectCurrentDate (projectStartDate);
+		SetProjectDueDate (projectDeadline);
+
+		this.timeToComplete = timeToComplete;
+		this.timeElapsed = 0;
+
+		levelNumber.text = "Level " + projectLevelNumber;
 	}
 
 	/** 
@@ -86,16 +98,25 @@ public class UiController : MonoBehaviour {
 	 * Use DayElapsed() to set current date instead.
 	 */
 	private void SetProjectCurrentDate (DateTime date) {
-		currentDate.text = FormatDate (date);
+		currentDateText.text = FormatDate (date);
+		this.currentDateTime = date;
 	}
 
 	private string FormatDate(DateTime date) {
 		return date.ToString ("dd MMM yyyy");
 	}
 
-	private bool CheckIfPastDueDate(DateTime currentDate, DateTime dueDate) {
-		Debug.Log ("You Failed!");
-		return currentDate > dueDate;
+	// Return true if past due date - false otherwise
+	// Doesn't actually need to take parameters - both variables are global - fix this
+	private bool CheckIfPastDueDate(DateTime currentDateTime, DateTime dueDate) {
+
+		if (currentDateTime > dueDate) {
+			Debug.Log ("You Failed!");
+			return true;
+		}
+
+
+		return false;
 	}
 
 	public void ShowEmployeeData (Employee employee) {
@@ -142,20 +163,30 @@ public class UiController : MonoBehaviour {
 		progressText.text = string.Format("{0:F0}%", fractComplete * 100f);
 	}
 
+	public void UpdateScoreDisplay(int projectCurrentScore, int projectTargetScore) {
+		currentGameScore = projectCurrentScore;
+		float fractComplete = Math.Min(1f, ((float)projectCurrentScore / (float)projectTargetScore));
+		progressBar.fillAmount = fractComplete;
+		progressText.text = string.Format("{0:F0}%", fractComplete * 100f);
+	}
+
 	private void CheckIfProjectComplete()
 	{
 		if (currentGameScore > targetScore) {
 			Debug.Log ("You finished the project!");
 			// Placeholder - will need something here
 		}
+			
+	}
 
-
+	public void ProjectFinished() {
+		//Do Something
 	}
 
 	public void DayElapsed() {
 		this.timeElapsed ++;
 		SetProjectCurrentDate(this.startDate.AddDays (timeElapsed));
-		CheckIfPastDueDate (startDate, dueDate);
+		CheckIfPastDueDate (currentDateTime, dueDate);
 	}
 	#endregion
 		
@@ -190,7 +221,7 @@ public class UiController : MonoBehaviour {
 
 	#region TEMP TESTING START METHOD
 	void TestMethod() {
-		SetLevelInformation (1, 1000, new DateTime(2016, 07, 14), new DateTime(2016, 07, 16));
+		SetLevelInformation (1, 200, new DateTime(2016, 07, 14), new DateTime(2016, 07, 16));
 
 		SetProjectEstimatedCompletionDate (new DateTime(2016, 08, 28));
 	}

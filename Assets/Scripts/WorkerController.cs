@@ -59,7 +59,6 @@ public class WorkerController : MonoBehaviour {
 				waiting = true;
 				StartCoroutine(WaitAtLocation ());
 
-
 				if (routineChanged == false) {
 					UpdateScore (scoreAmount);
 				}
