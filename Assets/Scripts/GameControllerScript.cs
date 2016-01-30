@@ -11,7 +11,11 @@ public class GameControllerScript : MonoBehaviour
 	}
 		
 	public bool interrupt;
+
 	public GameObject cubePrefab;
+	public GameObject pointMarkerPrefab;
+	public Transform pointMarkerGroup;
+
 	public int numberOfCubes = 4;
 	public float waitTimeMin = 10f;
 	public float waitTimeMax = 15f;
@@ -136,6 +140,10 @@ public class GameControllerScript : MonoBehaviour
 	public void DoneClicked() {
 		employeeWorkerControllers.Add (workerControllerBeingCreated);
 
+		foreach (Transform childTransform in pointMarkerGroup) {
+			Destroy (childTransform.gameObject);
+		}
+
 		SetAddingWorker (false);
 		uiController.HideEmployeeData ();
 	}
@@ -157,11 +165,24 @@ public class GameControllerScript : MonoBehaviour
 			employeeBeingCreated.AddRitualStep (obstacle);
 
 			if (employeeBeingCreated.RitualSteps.Count == 1) {
-				workerControllerBeingCreated = (Instantiate (cubePrefab, obstacle.targetLocation.position, Quaternion.identity) as GameObject).GetComponent<WorkerController>();
+				workerControllerBeingCreated = (Instantiate (cubePrefab, obstacle.targetLocation.position, Quaternion.identity) as GameObject).GetComponent<WorkerController> ();
 				workerControllerBeingCreated.Employee = employeeBeingCreated;
+			} else {
+				AddPathBetween (employeeBeingCreated.RitualSteps [employeeBeingCreated.RitualSteps.Count - 2].targetLocation.position, 
+					employeeBeingCreated.RitualSteps [employeeBeingCreated.RitualSteps.Count - 1].targetLocation.position);
 			}
 
 			uiController.ShowEmployeeData (employeeBeingCreated);
+		}
+	}
+
+	private void AddPathBetween (Vector3 startPos, Vector3 endPos) {
+		float dist = (endPos - startPos).magnitude;
+		int numPoints = (int)((Mathf.FloorToInt (dist) - 1) / 5f);
+		for (int p = 1; p < numPoints; p++) {
+			Vector3 pointPos = Vector3.Lerp (startPos, endPos, ((float) p / numPoints));
+			GameObject point = Instantiate (pointMarkerPrefab, pointPos, Quaternion.identity) as GameObject;
+			point.transform.SetParent (pointMarkerGroup);
 		}
 	}
 
