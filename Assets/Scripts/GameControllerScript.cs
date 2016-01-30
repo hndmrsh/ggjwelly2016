@@ -53,11 +53,8 @@ public class GameControllerScript : MonoBehaviour
 			totalTime = Time.time;
 
 			if (totalTime - previousTime > dayTimeInterval) {
-				Debug.Log ("Time Since Last: " + previousTime);
 				previousTime = totalTime;
 				uiController.DayElapsed ();
-
-
 			}
 
 			/*
