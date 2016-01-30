@@ -53,14 +53,16 @@ public class GameControllerScript : MonoBehaviour
 
 		AddingWorker = false;
 
+		/*
 		interrupt = false;
 		StartCoroutine (time());
+		*/
 	}
 
 	IEnumerator time() 
 	{
 
-		while (projectFinished == false) 
+		while (projectFinished == false && phase == Phase.Project) 
 		{
 			totalTime = Time.time;
 
@@ -110,10 +112,12 @@ public class GameControllerScript : MonoBehaviour
 	// Remove this method?
 	public void ObjectClickedByPlayer(bool routineChanged) 
 	{
-		if (routineChanged == true) {
-			UpdateScore (10);
-		} else {
-			UpdateScore (-10);
+		if (phase == Phase.Project) {
+			if (routineChanged == true) {
+				UpdateScore (10);
+			} else {
+				UpdateScore (-10);
+			}
 		}
 
 		//Debug.Log ("Clicked on object. Score now: " + score.ToString());
@@ -134,7 +138,6 @@ public class GameControllerScript : MonoBehaviour
 
 	public void CheckIfPastDueDate() {
 		if (projectCurrentDate > projectDueDate) {
-			//do something
 			uiController.ProjectFailed();
 		}
 	}

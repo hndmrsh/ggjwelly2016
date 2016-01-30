@@ -34,9 +34,11 @@ public class UiController : MonoBehaviour {
 	private int currentGameScore = 0;
 
 	private float ritualStepPrefabHeight;
+	/*
 	private DateTime startDate;
 	private DateTime dueDate;
 	private DateTime currentDateTime;
+	*/
 	private int timeToComplete;
 	private int timeElapsed;
 
@@ -83,7 +85,7 @@ public class UiController : MonoBehaviour {
 	 */
 	private void SetProjectStartDate (DateTime date) {
 		startDateText.text = FormatDate (date);
-		this.startDate = date;
+		//this.startDate = date;
 	}
 
 	/** 
@@ -92,7 +94,7 @@ public class UiController : MonoBehaviour {
 	private void SetProjectDueDate (DateTime date) {
 		dueDateHiring.text = FormatDate (date);
 		dueDateProject.text = FormatDate (date);
-		dueDate = date;
+		//dueDate = date;
 	}
 
 	public void SetProjectEstimatedCompletionDate (DateTime date) {
