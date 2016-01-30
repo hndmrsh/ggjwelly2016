@@ -108,6 +108,14 @@ public class UiController : MonoBehaviour {
 		}
 	}
 
+	public void ShowStartProjectButton (bool show) {
+		if (show) {
+			startProjectButton.gameObject.SetActive (true);
+		} else {
+			startProjectButton.gameObject.SetActive (false);
+		}
+	}
+
 	#region Update display
 
 	public void UpdateScoreDisplay(int projectCurrentScore, int projectTargetScore) {
@@ -156,17 +164,4 @@ public class UiController : MonoBehaviour {
 	}
 	#endregion
 
-
-	/*
-	#region TEMP TESTING START METHOD
-	void TestMethod() {
-		SetLevelInformation (1, 200, new DateTime(2016, 07, 14), new DateTime(2016, 07, 16));
-
-		SetProjectEstimatedCompletionDate (new DateTime(2016, 08, 28));
-	}
-
-
-	#endregion
-
-*/
 }

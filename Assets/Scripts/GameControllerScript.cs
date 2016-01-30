@@ -35,7 +35,7 @@ public class GameControllerScript : MonoBehaviour
 	private DateTime projectEstimatedFinishDate;
 	private int projectScore = 0;
 	private int projectLevel = 1;
-	private bool projectFinished = false;
+	public bool ProjectFinished { get; set; }
 
 	public const int intialScore = 200;
 	public int projectTargetScore = 200;
@@ -44,7 +44,7 @@ public class GameControllerScript : MonoBehaviour
 	private int projectTimeToComplete; // Maybe useful
 	private int projectTimeElapsed; // Maybe useful
 
-	private Phase phase;
+	public Phase CurrentPhase { get; set; }
 
 	private List<WorkerController> employeeWorkerControllers = new List<WorkerController> ();
 
@@ -56,8 +56,8 @@ public class GameControllerScript : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		phase = Phase.Hiring;
-
+		CurrentPhase = Phase.Hiring;
+		ProjectFinished = false;
 		AddingWorker = false;
 
 		dayTimeInterval = 2f;
@@ -65,7 +65,7 @@ public class GameControllerScript : MonoBehaviour
 	}
 
 	void Update() {
-		if (projectFinished == false && phase == Phase.Project) {
+		if (ProjectFinished == false && CurrentPhase == Phase.Project) {
 
 			totalTime = Time.time;
 
@@ -74,19 +74,6 @@ public class GameControllerScript : MonoBehaviour
 				DayElapsed ();
 			}
 
-		}
-
-	}
-		
-	// Remove this method? We need the onclick in the worker controller method, not here
-	public void ObjectClickedByPlayer(bool routineChanged) 
-	{
-		if (phase == Phase.Project && projectFinished == false) {
-			if (routineChanged == true) {
-				UpdateScore (10);
-			} else {
-				UpdateScore (-10);
-			}
 		}
 
 	}
@@ -120,6 +107,7 @@ public class GameControllerScript : MonoBehaviour
 		}
 	}
 
+
 	private void ProjectOver(bool completed) {
 		projectFinished = true;
 
@@ -127,6 +115,7 @@ public class GameControllerScript : MonoBehaviour
 		foreach (var worker in employeeWorkerControllers) {
 			Destroy (worker.gameObject);
 		}
+	
 
 		if (completed) {
 			uiController.ProjectFinished (); 		// level is won - update UI
@@ -202,7 +191,8 @@ public class GameControllerScript : MonoBehaviour
 	public void StartProjectClicked() {
 		projectFinished = false;
 		uiController.ShowProjectPhase ();
-		phase = Phase.Project;
+		CurrentPhase = Phase.Project;
+		ProjectFinished = false;
 
 		foreach (WorkerController w in employeeWorkerControllers) {
 			w.InitiateInProjectPhase (employeeWorkerControllers.Count);
@@ -230,6 +220,7 @@ public class GameControllerScript : MonoBehaviour
 
 		SetAddingWorker (false);
 		uiController.HideEmployeeData ();
+		uiController.ShowStartProjectButton (true);
 	}
 
 	private void SetAddingWorker(bool addingWorker) {
