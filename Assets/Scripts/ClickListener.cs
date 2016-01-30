@@ -8,7 +8,6 @@ public class ClickListener : MonoBehaviour {
 	void Start() 
 	{
 		workerController = gameObject.GetComponent<WorkerController> ();
-
 	}
 
 	public bool OnClick() 
