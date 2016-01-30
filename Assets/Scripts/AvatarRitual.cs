@@ -3,12 +3,15 @@ using System.Collections;
 
 public class AvatarRitual : MonoBehaviour {
 
-	Vector2 newPosition;
-	ArrayList avatarMove = new ArrayList();
+	private Vector2 newPosition;
+	private ArrayList avatarMove = new ArrayList();
+	private GameObject UI;
+	private UiController uiControllerScript;
 	
 	// Use this for initialization
 	void Start () {
-
+		UI = GameObject.FindGameObjectWithTag ("UI");
+		uiControllerScript = UI.GetComponent<UiController> ();
 	}
 	
 	// Update is called once per frame
@@ -26,7 +29,13 @@ public class AvatarRitual : MonoBehaviour {
 					objectHit = hit.transform.gameObject;
 					Vector2 target = objectHit.transform.position;
 					//transform.position = new Vector2 (target.x, target.y); // move the avatar to the object
-					avatarMove.Add(target); // add the clicked position to a list-
+
+					if (avatarMove.Contains (target) == false) 
+					{
+						//uiControllerScript.DrawPath (startLocation, endLocation); //Uncomment this code when uiController has this method
+						avatarMove.Add(target); // add the clicked position to a list-
+					}
+
                 }
              }
          }
