@@ -6,11 +6,8 @@ using System.Collections.Generic;
 
 public class WorkerController : MonoBehaviour {
 
-	//private RulesGenerator ruleGenerator; // Get a reference to the script that produces that locations we want to move towards
 	private GameObject gameController;
 	private GameControllerScript gameControllerScript;
-
-	//public GameObject map;
 
 	private GameObject map; 
 	public int minRules = 3;
@@ -27,6 +24,11 @@ public class WorkerController : MonoBehaviour {
 	private float mapXSize, mapYSize;
 	private bool waiting = false;
 	private float chanceToChangeRoutine = 0.1f;
+
+	public GameObject yesSpeech;
+	public GameObject noSpeech;
+	private float speechShowingTime = 2f;
+	private const float timeToShowSpeech = 2f;
 
 	public Employee Employee { get; set; }
 
@@ -77,6 +79,12 @@ public class WorkerController : MonoBehaviour {
 			}
 		}
 
+		if (speechShowingTime < timeToShowSpeech) {
+			speechShowingTime += Time.deltaTime;
+			if (speechShowingTime >= timeToShowSpeech) {
+				DismissSpeech();
+			}
+		}
 	}
 
 	public void InitiateInProjectPhase(int workerCount) {
@@ -141,11 +149,36 @@ public class WorkerController : MonoBehaviour {
 	public void OnClick() 
 	{
 		// Must do this first, as ReturnToOriginalRoutine reverts routineChanged to false
-		gameControllerScript.ObjectClickedByPlayer (routineChanged);
+		if (gameControllerScript.CurrentPhase == GameControllerScript.Phase.Project && gameControllerScript.ProjectFinished == false) {
+			if (routineChanged == true) {
+				UpdateScore (10);
+				ShowYesSpeech ();
+			} else {
+				UpdateScore (-10);
+				ShowNoSpeech ();
+			}
+		}
 
 		if (routineChanged) {
 			ReturnToOriginalRoutine ();
 		} 
+	}
+
+	private void ShowYesSpeech() {
+		yesSpeech.SetActive (true);
+		noSpeech.SetActive (false);
+		speechShowingTime = 0f;
+	}
+
+	private void ShowNoSpeech() {
+		yesSpeech.SetActive (false);
+		noSpeech.SetActive (true);
+		speechShowingTime = 0f;
+	}
+		
+	private void DismissSpeech() {
+		yesSpeech.SetActive (false);
+		noSpeech.SetActive (false);
 	}
 
 }
