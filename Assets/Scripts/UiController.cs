@@ -45,12 +45,16 @@ public class UiController : MonoBehaviour {
 		//TestMethod ();
 	}
 
+
+	/*
 	void Update() {
 		if (Input.GetKeyDown (KeyCode.Z)) {
 			DayElapsed ();
 		}
 	}
+	*/
 
+	/*
 	public void SetLevelInformation(int number, int timeToComplete, DateTime projectStartDate, DateTime projectDeadline) {
 		SetProjectStartDate (projectStartDate);
 		SetProjectCurrentDate (projectStartDate);
@@ -61,6 +65,7 @@ public class UiController : MonoBehaviour {
 
 		levelNumber.text = "Level " + number;
 	}
+	*/
 
 	public void SetProjectLevelInformation(int projectLevelNumber, int timeToComplete, DateTime projectStartDate, DateTime projectDeadline) {
 		SetProjectStartDate (projectStartDate);
@@ -97,9 +102,15 @@ public class UiController : MonoBehaviour {
 	/**
 	 * Use DayElapsed() to set current date instead.
 	 */
+	/*
 	private void SetProjectCurrentDate (DateTime date) {
 		currentDateText.text = FormatDate (date);
 		this.currentDateTime = date;
+	}
+	*/
+
+	public void SetProjectCurrentDate(DateTime projectCurrentDate) {
+		currentDateText.text = FormatDate (projectCurrentDate);
 	}
 
 	private string FormatDate(DateTime date) {
@@ -108,6 +119,7 @@ public class UiController : MonoBehaviour {
 
 	// Return true if past due date - false otherwise
 	// Doesn't actually need to take parameters - both variables are global - fix this
+	/*
 	private bool CheckIfPastDueDate(DateTime currentDateTime, DateTime dueDate) {
 
 		if (currentDateTime > dueDate) {
@@ -118,6 +130,7 @@ public class UiController : MonoBehaviour {
 
 		return false;
 	}
+	*/
 
 	public void ShowEmployeeData (Employee employee) {
 		if (!employeeGroup.activeSelf) {
@@ -156,12 +169,14 @@ public class UiController : MonoBehaviour {
 	}
 
 	#region Update display
+	/*
 	public void UpdateScoreDisplay(int currentScore) {
 		currentGameScore = currentScore;
 		float fractComplete = Math.Min(1f, ((float)currentScore / (float)targetScore));
 		progressBar.fillAmount = fractComplete;
 		progressText.text = string.Format("{0:F0}%", fractComplete * 100f);
 	}
+	*/
 
 	public void UpdateScoreDisplay(int projectCurrentScore, int projectTargetScore) {
 		currentGameScore = projectCurrentScore;
@@ -170,6 +185,7 @@ public class UiController : MonoBehaviour {
 		progressText.text = string.Format("{0:F0}%", fractComplete * 100f);
 	}
 
+	/*
 	private void CheckIfProjectComplete()
 	{
 		if (currentGameScore > targetScore) {
@@ -178,16 +194,23 @@ public class UiController : MonoBehaviour {
 		}
 			
 	}
+	*/
 
-	public void ProjectFinished() {
-		//Do Something
+	public void ProjectFailed() {
+		Debug.Log ("The project couldn't be completed in time");
 	}
 
+	public void ProjectFinished() {
+		Debug.Log ("You finished the project!");
+	}
+
+	/*
 	public void DayElapsed() {
 		this.timeElapsed ++;
 		SetProjectCurrentDate(this.startDate.AddDays (timeElapsed));
-		CheckIfPastDueDate (currentDateTime, dueDate);
+		//CheckIfPastDueDate (currentDateTime, dueDate);
 	}
+	*/
 	#endregion
 		
 
@@ -219,6 +242,7 @@ public class UiController : MonoBehaviour {
 	#endregion
 
 
+	/*
 	#region TEMP TESTING START METHOD
 	void TestMethod() {
 		SetLevelInformation (1, 200, new DateTime(2016, 07, 14), new DateTime(2016, 07, 16));
@@ -226,7 +250,8 @@ public class UiController : MonoBehaviour {
 		SetProjectEstimatedCompletionDate (new DateTime(2016, 08, 28));
 	}
 
+
 	#endregion
 
-
+*/
 }

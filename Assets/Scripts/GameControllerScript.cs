@@ -95,13 +95,15 @@ public class GameControllerScript : MonoBehaviour
 	private void InterruptRoutine() 
 	{
 		if (phase == Phase.Project) {
-			int index = Random.Range (0, employeeWorkerControllers.Count);
+			if (employeeWorkerControllers.Count > 0) {
+				int index = Random.Range (0, employeeWorkerControllers.Count);
 
-			WorkerController objectToInterrupt = employeeWorkerControllers [index];
+				WorkerController objectToInterrupt = employeeWorkerControllers [index];
 
-			if (objectToInterrupt.routinesCompleted >= numberOfRoutinesBeforeChange) {
-				objectToInterrupt.ChangeRoutineDrastically ();
-				//Maybe do change Minor Routine
+				if (objectToInterrupt.routinesCompleted >= numberOfRoutinesBeforeChange) {
+					objectToInterrupt.ChangeRoutineDrastically ();
+					//Maybe do change Minor Routine
+				}
 			}
 		}
 	}
@@ -123,6 +125,13 @@ public class GameControllerScript : MonoBehaviour
 		projectScore += scoreAmount;
 		uiController.UpdateScoreDisplay (projectScore, projectTargetScore);
 		CheckIfScoreReached ();
+	}
+
+	public void CheckIfPastDueDue() {
+		if (projectCurrentDate > projectDueDate) {
+			//do something
+			uiController.ProjectFailed();
+		}
 	}
 
 	private void CheckIfScoreReached() {
@@ -199,7 +208,7 @@ public class GameControllerScript : MonoBehaviour
 	}
 
 	private void DayElapsed() {
-		projectCurrentDate.AddDays (1);
-		uiController.DayElapsed ();
+		projectCurrentDate = projectCurrentDate.AddDays (1);
+		uiController.SetProjectCurrentDate (projectCurrentDate);
 	}
 }
