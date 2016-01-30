@@ -4,8 +4,9 @@ using System.Collections;
 public class Anim : MonoBehaviour {
 
 	public bool MouseClicked;
-
 	public Animator animation;	
+	Ray ray;
+	RaycastHit hit;
 
 
 	// Use this for initialization
@@ -14,26 +15,27 @@ public class Anim : MonoBehaviour {
 		MouseClicked = false;
 		animation = GetComponent<Animator>();
 
-	
 	}
 
 
-	void Update(){
+	void OnMouseDown(){
 		
-		if(Input.GetMouseButtonDown(0))
+		ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		if(Physics.Raycast(ray, out hit))
 		{
-
-			Debug.Log ("MOUSE CLICK");
-			animation.SetBool("MouseClicked", true); 
+			animation.SetBool("WalkingToTarget", true); 
 		}
 
-		//if got to target position//
-		if(Input.GetMouseButtonDown(1))
-		{
-			animation.SetBool("MouseClicked", false);
-			}
+	}
+
+	void OnTriggerEnter(Collider other) {
+
+		if(other.gameObject.tag == "Target")
+	{
+			animation.SetBool("WalkingToTarget", false);
+		Destroy(other.gameObject);
 
 	}
-	
 
+}
 }
