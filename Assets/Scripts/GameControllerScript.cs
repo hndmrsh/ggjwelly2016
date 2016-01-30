@@ -109,7 +109,7 @@ public class GameControllerScript : MonoBehaviour
 
 
 	private void ProjectOver(bool completed) {
-		projectFinished = true;
+		ProjectFinished = true;
 
 
 		foreach (var worker in employeeWorkerControllers) {
@@ -131,7 +131,7 @@ public class GameControllerScript : MonoBehaviour
 
 		DetermineDatesForNewProject ();
 
-		phase = Phase.Hiring;
+		CurrentPhase = Phase.Hiring;
 		uiController.ShowHiringPhase ();
 	}
 
@@ -189,7 +189,6 @@ public class GameControllerScript : MonoBehaviour
 	}*/
 
 	public void StartProjectClicked() {
-		projectFinished = false;
 		uiController.ShowProjectPhase ();
 		CurrentPhase = Phase.Project;
 		ProjectFinished = false;

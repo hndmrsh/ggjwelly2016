@@ -123,12 +123,10 @@ public class WorkerController : MonoBehaviour {
 
 	public void ChangeRoutineMinor() 
 	{
-
-//		var newWayPoints = ConvertToWayPoints(GenerateRulesForCube ()); // Generate a new set
 //
-//		var randomPosition = Random.Range (0, newWayPoints.Count); // Figure out which of our way points we'll change
+//		var randomPosition = Random.Range (0, passedInArray.Count); // Figure out which of our way points we'll change
 //
-//		wayPoints [randomPosition] = newWayPoints [randomPosition]; // Change one waypoint
+//		wayPoints [randomPosition] = passedInArray [randomPosition]; // Change one waypoint
 //
 //		routineChanged = true;
 //		routinesCompleted = 0;
