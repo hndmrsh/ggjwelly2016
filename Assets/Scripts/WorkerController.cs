@@ -41,8 +41,6 @@ public class WorkerController : MonoBehaviour {
 		Vector3 scale = map.transform.localScale;
 		mapXSize = scale.x;
 		mapYSize = scale.y;
-
-		gameObject.GetComponent<Employee> ();
 	}
 
 	// Update is called once per frame
