@@ -34,63 +34,26 @@ public class UiController : MonoBehaviour {
 	private int currentGameScore = 0;
 
 	private float ritualStepPrefabHeight;
-	/*
-	private DateTime startDate;
-	private DateTime dueDate;
-	private DateTime currentDateTime;
-	*/
-	private int timeToComplete;
-	private int timeElapsed;
 
 	void Start() {
 		ritualStepPrefabHeight = ritualStepPrefab.GetComponent<RectTransform> ().sizeDelta.y;
 		//TestMethod ();
 	}
 
-
-	/*
-	void Update() {
-		if (Input.GetKeyDown (KeyCode.Z)) {
-			DayElapsed ();
-		}
-	}
-	*/
-
-	/*
-	public void SetLevelInformation(int number, int timeToComplete, DateTime projectStartDate, DateTime projectDeadline) {
+	public void SetProjectLevelInformation(int projectLevelNumber, DateTime projectStartDate, DateTime projectDeadline, DateTime estimatedFinishDate) {
 		SetProjectStartDate (projectStartDate);
 		SetProjectCurrentDate (projectStartDate);
 		SetProjectDueDate (projectDeadline);
-
-		this.timeToComplete = timeToComplete;
-		this.timeElapsed = 0;
-
-		levelNumber.text = "Level " + number;
-	}
-	*/
-
-	public void SetProjectLevelInformation(int projectLevelNumber, int timeToComplete, DateTime projectStartDate, DateTime projectDeadline) {
-		SetProjectStartDate (projectStartDate);
-		SetProjectCurrentDate (projectStartDate);
-		SetProjectDueDate (projectDeadline);
-
-		this.timeToComplete = timeToComplete;
-		this.timeElapsed = 0;
+		SetProjectEstimatedCompletionDate(estimatedFinishDate);
 
 		levelNumber.text = "Level " + projectLevelNumber;
 	}
-
-	/** 
-	 * Use SetLevelInformation(...) instead.
-	 */
+		
 	private void SetProjectStartDate (DateTime date) {
 		startDateText.text = FormatDate (date);
 		//this.startDate = date;
 	}
-
-	/** 
-	 * Use SetLevelInformation(...) instead.
-	 */
+		
 	private void SetProjectDueDate (DateTime date) {
 		dueDateHiring.text = FormatDate (date);
 		dueDateProject.text = FormatDate (date);
@@ -101,16 +64,6 @@ public class UiController : MonoBehaviour {
 		estimateDate.text = FormatDate (date);
 	}
 
-	/**
-	 * Use DayElapsed() to set current date instead.
-	 */
-	/*
-	private void SetProjectCurrentDate (DateTime date) {
-		currentDateText.text = FormatDate (date);
-		this.currentDateTime = date;
-	}
-	*/
-
 	public void SetProjectCurrentDate(DateTime projectCurrentDate) {
 		currentDateText.text = FormatDate (projectCurrentDate);
 	}
@@ -118,21 +71,6 @@ public class UiController : MonoBehaviour {
 	private string FormatDate(DateTime date) {
 		return date.ToString ("dd MMM yyyy");
 	}
-
-	// Return true if past due date - false otherwise
-	// Doesn't actually need to take parameters - both variables are global - fix this
-	/*
-	private bool CheckIfPastDueDate(DateTime currentDateTime, DateTime dueDate) {
-
-		if (currentDateTime > dueDate) {
-			Debug.Log ("You Failed!");
-			return true;
-		}
-
-
-		return false;
-	}
-	*/
 
 	public void ShowEmployeeData (Employee employee) {
 		if (!employeeGroup.activeSelf) {
@@ -171,14 +109,6 @@ public class UiController : MonoBehaviour {
 	}
 
 	#region Update display
-	/*
-	public void UpdateScoreDisplay(int currentScore) {
-		currentGameScore = currentScore;
-		float fractComplete = Math.Min(1f, ((float)currentScore / (float)targetScore));
-		progressBar.fillAmount = fractComplete;
-		progressText.text = string.Format("{0:F0}%", fractComplete * 100f);
-	}
-	*/
 
 	public void UpdateScoreDisplay(int projectCurrentScore, int projectTargetScore) {
 		currentGameScore = projectCurrentScore;
@@ -186,17 +116,7 @@ public class UiController : MonoBehaviour {
 		progressBar.fillAmount = fractComplete;
 		progressText.text = string.Format("{0:F0}%", fractComplete * 100f);
 	}
-
-	/*
-	private void CheckIfProjectComplete()
-	{
-		if (currentGameScore > targetScore) {
-			Debug.Log ("You finished the project!");
-			// Placeholder - will need something here
-		}
-			
-	}
-	*/
+		
 
 	public void ProjectFailed() {
 		Debug.Log ("The project couldn't be completed in time");
@@ -205,14 +125,7 @@ public class UiController : MonoBehaviour {
 	public void ProjectFinished() {
 		Debug.Log ("You finished the project!");
 	}
-
-	/*
-	public void DayElapsed() {
-		this.timeElapsed ++;
-		SetProjectCurrentDate(this.startDate.AddDays (timeElapsed));
-		//CheckIfPastDueDate (currentDateTime, dueDate);
-	}
-	*/
+		
 	#endregion
 		
 

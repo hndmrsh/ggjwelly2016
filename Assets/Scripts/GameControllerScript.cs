@@ -21,22 +21,25 @@ public class GameControllerScript : MonoBehaviour
 	public float waitTimeMax = 15f;
 	public int numberOfRoutinesBeforeChange = 3;
 	public UiController uiController;
-	public int daysAwayFromDeadlineInitialiser = 30;
+	public int daysAwayFromDeadlineInitialiser = 28;
 
 	private float previousTime = 0f; // Keeps track of difference between previous 'day' and total time. If > than interval, day has past
 	private float totalTime = 0f; // Keeps track of total time progressed
-	public float dayTimeInterval = 3f;
+	public float dayTimeInterval = 2f;
 
 
 	// Variables to keep track of the "level" or difficulty of project
 	private DateTime projectStartDate;
 	private DateTime projectDueDate;
 	private DateTime projectCurrentDate;
+	private DateTime projectEstimatedFinishDate;
 	private int projectScore = 0;
 	private int projectLevel = 1;
 	private bool projectFinished = false;
 
-	public const int projectTargetScore = 200;
+	public const int intialScore = 200;
+	public int projectTargetScore = 200;
+	public int projectTargetScoreIncrement = 50;
 
 	private int projectTimeToComplete; // Maybe useful
 	private int projectTimeElapsed; // Maybe useful
@@ -57,7 +60,7 @@ public class GameControllerScript : MonoBehaviour
 
 		AddingWorker = false;
 
-		dayTimeInterval = 3f;
+		dayTimeInterval = 2f;
 
 	}
 
@@ -94,6 +97,11 @@ public class GameControllerScript : MonoBehaviour
 		CheckIfScoreReached ();
 	}
 
+	public void ResetScore() {
+		projectScore = 0;
+		uiController.UpdateScoreDisplay (projectScore, projectTargetScore);
+	}
+
 	private void DayElapsed() {
 		projectCurrentDate = projectCurrentDate.AddDays (1);
 		uiController.SetProjectCurrentDate (projectCurrentDate);
@@ -102,21 +110,97 @@ public class GameControllerScript : MonoBehaviour
 
 	public void CheckIfPastDueDate() {
 		if (projectCurrentDate > projectDueDate) {
-			uiController.ProjectFailed();
+			ProjectOver(false);
 		}
 	}
-
-
-
+		
 	private void CheckIfScoreReached() {
 		if (projectScore >= projectTargetScore) {
-			// Game is finished - update UI
-			projectFinished = true;
-			uiController.ProjectFinished();
+			ProjectOver(true);
 		}
 	}
 
+	private void ProjectOver(bool completed) {
+		projectFinished = true;
+
+
+		foreach (var worker in employeeWorkerControllers) {
+			Destroy (worker.gameObject);
+		}
+
+		if (completed) {
+			uiController.ProjectFinished (); 		// level is won - update UI
+			projectLevel++;
+		} else {
+			uiController.ProjectFailed ();
+			projectLevel = 1;
+		}
+
+		employeeWorkerControllers.Clear ();
+
+		ResetScore ();
+
+		DetermineDatesForNewProject ();
+
+		phase = Phase.Hiring;
+		uiController.ShowHiringPhase ();
+	}
+
+	/*
+	private void ProjectFailed() {
+		projectFinished = true;
+		uiController.ProjectFailed(); // Just logs to console
+
+		foreach (var worker in employeeWorkerControllers) {
+			Destroy (worker.gameObject);
+		}
+
+		employeeWorkerControllers.Clear ();
+
+		ResetScore ();
+
+		DetermineDatesForNewProject ();
+
+		phase = Phase.Hiring;
+		uiController.ShowHiringPhase ();
+
+	}
+
+*/
+	/*
+	private void ProjectCompleted() {
+		
+		projectFinished = true;
+		uiController.ProjectFinished(); 		// Game is finished - update UI
+
+		foreach (var worker in employeeWorkerControllers) {
+			Destroy (worker.gameObject);
+		}
+
+		employeeWorkerControllers.Clear ();
+
+		// Victory - moving to next level
+		projectLevel++;
+		//projectTargetScore += projectTargetScoreIncrement; // Make the score higher
+
+		ResetScore ();
+
+		DetermineDatesForNewProject ();
+
+		phase = Phase.Hiring;
+		uiController.ShowHiringPhase ();
+
+	}*/
+
+	/*
+	private void InitialiseGenericVariables() {
+		projectFinished = false;
+		phase = Phase.Project;
+		ResetScore ();
+	}*/
+
 	public void StartProjectClicked() {
+		projectFinished = false;
 		uiController.ShowProjectPhase ();
 		phase = Phase.Project;
 
@@ -189,10 +273,11 @@ public class GameControllerScript : MonoBehaviour
 	private void DetermineDatesForNewProject() {
 		projectStartDate = DateTime.Now;
 		projectCurrentDate = projectStartDate;
-		projectDueDate = projectStartDate.AddDays (daysAwayFromDeadlineInitialiser - projectLevel);
+		projectDueDate = projectStartDate.AddDays (daysAwayFromDeadlineInitialiser - (2 * projectLevel));
+		projectEstimatedFinishDate = projectDueDate.AddDays (-3);
 
 		// Project time to finish means nothing right now
-		uiController.SetProjectLevelInformation (projectLevel, 200, projectStartDate, projectDueDate);
+		uiController.SetProjectLevelInformation (projectLevel, projectStartDate, projectDueDate, projectEstimatedFinishDate);
 
 	}
 
