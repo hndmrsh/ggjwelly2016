@@ -11,6 +11,8 @@ public class GameControllerScript : MonoBehaviour
 	public float waitTimeMin = 10f;
 	public float waitTimeMax = 15f;
 	public int numberOfRoutinesBeforeChange = 3;
+	public UiController uiController;
+
 	private int score = 0;
 
 	private List<GameObject> cubes = new List<GameObject> ();
@@ -83,6 +85,6 @@ public class GameControllerScript : MonoBehaviour
 
 	public void UpdateScore(int scoreAmount) {
 		score += scoreAmount;
-		Debug.Log ("Score: " + score);
+		uiController.UpdateScoreDisplay (score);
 	}
 }

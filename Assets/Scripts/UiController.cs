@@ -26,7 +26,6 @@ public class UiController : MonoBehaviour {
 	private float ritualStepPrefabHeight;
 
 	private int targetScore;
-	private int currentScore;
 
 	public void SetLevelInformation(int number, int targetScore) {
 		this.targetScore = targetScore;
@@ -74,17 +73,7 @@ public class UiController : MonoBehaviour {
 		employeeGroup.SetActive (false);
 	}
 
-	public void AddPoints(int points) {
-		currentScore += points;
-		UpdateProgressBar ();
-	}
-
-	public void RemovePoints(int points) {
-		currentScore -= points;
-		UpdateProgressBar ();
-	}
-
-	private void UpdateProgressBar() {
+	public void UpdateScoreDisplay(int currentScore) {
 		float fractComplete = Math.Min(1f, ((float)currentScore / (float)targetScore));
 		progressBar.fillAmount = fractComplete;
 		progressText.text = string.Format("{0:F0}%", fractComplete * 100f);
@@ -124,11 +113,6 @@ public class UiController : MonoBehaviour {
 		ShowEmployeeData(e);
 	}
 
-	void Update() {
-		if (Input.GetKey (KeyCode.Z)) {
-			AddPoints (9);
-		}
-	}
 	#endregion
 
 

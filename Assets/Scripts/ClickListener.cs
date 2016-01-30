@@ -15,8 +15,12 @@ public class ClickListener : MonoBehaviour {
 	{
 		Debug.Log ("object clicked: " + name);
 
-		return workerController.routineChanged;
+		if (workerController.routineChanged) {
+			workerController.ReturnToOriginalRoutine ();
+			return true;
+		} 
 
+		return false;
 	}
 
 }
