@@ -5,6 +5,9 @@ using System;
 
 public class UiController : MonoBehaviour {
 
+	public GameObject hiringPhaseLayer;
+	public GameObject projectPhaseLayer;
+
 	public Text levelNumber;
 	public Text startDate;
 	public Text dueDate;
@@ -16,9 +19,18 @@ public class UiController : MonoBehaviour {
 
 	public GameObject ritualStepsGroup;
 	public GameObject ritualStepPrefab;
+
+	public Text progressText;
+	public Image progressBar;
+
 	private float ritualStepPrefabHeight;
 
-	public void SetLevelNumber(int number) {
+	private int targetScore;
+	private int currentScore;
+
+	public void SetLevelInformation(int number, int targetScore) {
+		this.targetScore = targetScore;
+
 		levelNumber.text = "Level " + number;
 	}
 
@@ -61,16 +73,44 @@ public class UiController : MonoBehaviour {
 	public void HideEmployeeData () {
 		employeeGroup.SetActive (false);
 	}
+
+	public void AddPoints(int points) {
+		currentScore += points;
+		UpdateProgressBar ();
+	}
+
+	public void RemovePoints(int points) {
+		currentScore -= points;
+		UpdateProgressBar ();
+	}
+
+	private void UpdateProgressBar() {
+		float fractComplete = Math.Min(1f, ((float)currentScore / (float)targetScore));
+		progressBar.fillAmount = fractComplete;
+		progressText.text = string.Format("{0:F0}%", fractComplete * 100f);
+	}
 		
 	void Start() {
 		ritualStepPrefabHeight = ritualStepPrefab.GetComponent<RectTransform> ().sizeDelta.y;
 		TestMethod ();
 	}
 
+	#region Phase switching
+	void ShowHiringPhase() {
+		projectPhaseLayer.SetActive (false);
+		hiringPhaseLayer.SetActive (true);
+	}
+
+	void ShowProjectPhase() {
+		projectPhaseLayer.SetActive (true);
+		hiringPhaseLayer.SetActive (false);
+	}
+	#endregion
+
 
 	#region TEMP TESTING START METHOD
 	void TestMethod() {
-		SetLevelNumber (4);
+		SetLevelInformation (1, 1000);
 
 		SetProjectStartDate (new DateTime(2016, 07, 14));
 		SetProjectDueDate (new DateTime(2016, 09, 03));
@@ -82,6 +122,12 @@ public class UiController : MonoBehaviour {
 
 		//HideEmployeeData ();
 		ShowEmployeeData(e);
+	}
+
+	void Update() {
+		if (Input.GetKey (KeyCode.Z)) {
+			AddPoints (9);
+		}
 	}
 	#endregion
 
