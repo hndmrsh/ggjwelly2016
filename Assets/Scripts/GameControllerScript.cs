@@ -30,19 +30,7 @@ public class GameControllerScript : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-
-		for (int i = 0; i < numberOfCubes; i++) 
-		{
-			var toInstantiate = Instantiate (cubePrefab); // Create a certain number of objects
-			cubes.Add(toInstantiate);
-		}
-
-		interrupt = false;
-
-		StartCoroutine (time());
-
 		phase = Phase.Hiring;
-
 	}
 
 	IEnumerator time() 
@@ -115,5 +103,17 @@ public class GameControllerScript : MonoBehaviour
 	public void StartProjectClicked() {
 		uiController.ShowProjectPhase ();
 		phase = Phase.Project;
+		StartNewProject ();
+	}
+
+	private void StartNewProject() {
+		for (int i = 0; i < numberOfCubes; i++) 
+		{
+			var toInstantiate = Instantiate (cubePrefab); // Create a certain number of objects
+			cubes.Add(toInstantiate);
+		}
+
+		interrupt = false;
+		StartCoroutine (time());
 	}
 }

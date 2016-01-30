@@ -13,7 +13,7 @@ public class UiController : MonoBehaviour {
 	public Text dueDateHiring;
 	public Text dueDateProject;
 	public Text estimateDate;
-	public Text currentDate;
+	public Text currentDateText;
 
 	public GameObject employeeGroup;
 	public Text employeeName;
@@ -31,6 +31,7 @@ public class UiController : MonoBehaviour {
 	private float ritualStepPrefabHeight;
 	private DateTime startDate;
 	private DateTime dueDate;
+	private DateTime currentDateTime;
 	private int timeToComplete;
 	private int timeElapsed;
 
@@ -81,16 +82,25 @@ public class UiController : MonoBehaviour {
 	 * Use DayElapsed() to set current date instead.
 	 */
 	private void SetProjectCurrentDate (DateTime date) {
-		currentDate.text = FormatDate (date);
+		currentDateText.text = FormatDate (date);
+		this.currentDateTime = date;
 	}
 
 	private string FormatDate(DateTime date) {
 		return date.ToString ("dd MMM yyyy");
 	}
 
-	private bool CheckIfPastDueDate(DateTime currentDate, DateTime dueDate) {
-		Debug.Log ("You Failed!");
-		return currentDate > dueDate;
+	// Return true if past due date - false otherwise
+	// Doesn't actually need to take parameters - both variables are global - fix this
+	private bool CheckIfPastDueDate(DateTime currentDateTime, DateTime dueDate) {
+
+		if (currentDateTime > dueDate) {
+			Debug.Log ("You Failed!");
+			return true;
+		}
+
+
+		return false;
 	}
 
 	public void ShowEmployeeData (Employee employee) {
@@ -138,7 +148,7 @@ public class UiController : MonoBehaviour {
 	public void DayElapsed() {
 		this.timeElapsed ++;
 		SetProjectCurrentDate(this.startDate.AddDays (timeElapsed));
-		CheckIfPastDueDate (startDate, dueDate);
+		CheckIfPastDueDate (currentDateTime, dueDate);
 	}
 	#endregion
 		
