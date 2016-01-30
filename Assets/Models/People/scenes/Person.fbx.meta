@@ -1,16 +1,59 @@
 fileFormatVersion: 2
-guid: 53f2871d7ef204345ba194f7a8221ff1
-timeCreated: 1454125194
+guid: 8b97460a1356f42de9ca1b75a0d7c633
+timeCreated: 1454144056
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
+    100000: joint1
+    100002: joint2
+    100004: joint3
+    100006: joint8
+    100008: joint9
+    100010: L_arm
+    100012: L_elbow
+    100014: L_foot
+    100016: L_Knee
+    100018: L_leg
+    100020: L_sholder
+    100022: L_toe
+    100024: L_toe 1
+    100026: pCube1
+    100028: //RootNode
+    100030: R_arm
+    100032: R_elbow
+    100034: R_foot
+    100036: R_Knee
+    100038: R_leg
+    100040: R_sholder
+    100042: R_toe
+    100044: R_toe 1
+    400000: joint1
+    400002: joint2
+    400004: joint3
+    400006: joint8
+    400008: joint9
+    400010: L_arm
+    400012: L_elbow
+    400014: L_foot
+    400016: L_Knee
+    400018: L_leg
+    400020: L_sholder
+    400022: L_toe
+    400024: L_toe 1
+    400026: pCube1
+    400028: //RootNode
+    400030: R_arm
+    400032: R_elbow
+    400034: R_foot
+    400036: R_Knee
+    400038: R_leg
+    400040: R_sholder
+    400042: R_toe
+    400044: R_toe 1
     4300000: pCube1
     9500000: //RootNode
+    13700000: pCube1
   materials:
     importMaterials: 1
     materialName: 0
