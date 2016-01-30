@@ -17,7 +17,8 @@ public class WorkerController : MonoBehaviour {
 	public int maxRules = 6;
 	public int moveSpeed = 10; // Move speed factor - change if too fast or too slow
 	public int scoreAmount;
-	public float timeToWaitAtLocation = 2f;
+	public float minTimeToWaitAtLocation = 1.5f;
+	public float maxTimeToWaitAtLocation = 3f;
 
 	private int nextPoint = 1; // Indexes into the point array (all of our destinations)
 	private Vector3 currentDestination; // The next destination we're headed to
@@ -89,7 +90,8 @@ public class WorkerController : MonoBehaviour {
 	}
 
 	IEnumerator WaitAtLocation() {
-		yield return new WaitForSeconds (timeToWaitAtLocation);
+		var timeToWaitHere = Random.Range (minTimeToWaitAtLocation, maxTimeToWaitAtLocation);
+		yield return new WaitForSeconds (timeToWaitHere);
 		waiting = false;
 	}
 //

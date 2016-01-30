@@ -66,7 +66,6 @@ public class GameControllerScript : MonoBehaviour
 
 			if (totalTime - previousTime > dayTimeInterval) {
 				previousTime = totalTime;
-				//uiController.DayElapsed ();
 				DayElapsed();
 			}
 
@@ -127,12 +126,20 @@ public class GameControllerScript : MonoBehaviour
 		CheckIfScoreReached ();
 	}
 
-	public void CheckIfPastDueDue() {
+	private void DayElapsed() {
+		projectCurrentDate = projectCurrentDate.AddDays (1);
+		uiController.SetProjectCurrentDate (projectCurrentDate);
+		CheckIfPastDueDate ();
+	}
+
+	public void CheckIfPastDueDate() {
 		if (projectCurrentDate > projectDueDate) {
 			//do something
 			uiController.ProjectFailed();
 		}
 	}
+
+
 
 	private void CheckIfScoreReached() {
 		if (projectScore >= projectTargetScore) {
@@ -207,8 +214,5 @@ public class GameControllerScript : MonoBehaviour
 
 	}
 
-	private void DayElapsed() {
-		projectCurrentDate = projectCurrentDate.AddDays (1);
-		uiController.SetProjectCurrentDate (projectCurrentDate);
-	}
+
 }
