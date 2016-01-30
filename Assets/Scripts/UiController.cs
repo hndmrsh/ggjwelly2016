@@ -106,13 +106,17 @@ public class UiController : MonoBehaviour {
 		employeeName.text = employee.Name;
 		employeeOccupation.text = employee.Occupation;
 
+		foreach (Transform childTransform in ritualStepsGroup.transform) {
+			Destroy (childTransform.gameObject);
+		}
+
 		for (int s = 0; s < employee.RitualSteps.Count; s++) {
-			RitualStep step = employee.RitualSteps [s];
+			Obstacle obstacle = employee.RitualSteps [s];
 			Vector3 pos = Vector3.zero + (ritualStepPrefabHeight * s * Vector3.down);
 
 			GameObject stepDisplay = Instantiate (ritualStepPrefab, pos, Quaternion.identity) as GameObject;
 			RitualStepText stepText = stepDisplay.GetComponent<RitualStepText> ();
-			stepText.SetStepName (step.Name);
+			stepText.SetStepName (obstacle.obstacleName);
 
 			stepDisplay.transform.SetParent (ritualStepsGroup.transform, false);
 		}

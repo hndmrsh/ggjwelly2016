@@ -6,11 +6,11 @@ public class Employee {
 	public string Name { get; set; }
 	public string Occupation { get; set; }
 
-	private List<RitualStep> ritualSteps;
-	public List<RitualStep> RitualSteps { 
+	private List<Obstacle> ritualSteps;
+	public List<Obstacle> RitualSteps { 
 		get {
 			if (ritualSteps == null) {
-				ritualSteps = new List<RitualStep>();
+				ritualSteps = new List<Obstacle>();
 			}
 			return ritualSteps;
 		}
@@ -25,7 +25,7 @@ public class Employee {
 		this.Occupation = occupation;
 	}
 
-	public void AddRitualStep(RitualStep step) {
+	public void AddRitualStep(Obstacle step) {
 		RitualSteps.Add (step);
 	}
 

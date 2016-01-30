@@ -25,17 +25,18 @@ public class GameControllerScript : MonoBehaviour
 
 	private Phase phase;
 
-	private List<GameObject> cubes = new List<GameObject> ();
+	private List<WorkerController> employeeWorkerControllers = new List<WorkerController> ();
 
 
-	private bool addingWorker;
-	private Employee workerBeingCreated;
+	public bool AddingWorker { get; set; }
+	private Employee employeeBeingCreated;
+	private WorkerController workerControllerBeingCreated;
 
 	// Use this for initialization
 	void Start () 
 	{
 		phase = Phase.Hiring;
-		addingWorker = false;
+		AddingWorker = false;
 
 		interrupt = false;
 		StartCoroutine (time());
@@ -77,18 +78,16 @@ public class GameControllerScript : MonoBehaviour
 
 	private void InterruptRoutine() 
 	{
-		int index = Random.Range (0, cubes.Count);
+		if (phase == Phase.Project) {
+			int index = Random.Range (0, employeeWorkerControllers.Count);
 
-		var objectToInterrupt = cubes [index];
+			WorkerController objectToInterrupt = employeeWorkerControllers [index];
 
-		var objectScript = objectToInterrupt.GetComponent<WorkerController> ();
-
-		if (objectScript.routinesCompleted >= numberOfRoutinesBeforeChange) 
-		{
-			objectScript.ChangeRoutineDrastically ();
-			//Maybe do change Minor Routine
+			if (objectToInterrupt.routinesCompleted >= numberOfRoutinesBeforeChange) {
+				objectToInterrupt.ChangeRoutineDrastically ();
+				//Maybe do change Minor Routine
+			}
 		}
-			
 	}
 
 	public void ObjectClickedByPlayer(bool routineChanged) 
@@ -111,30 +110,50 @@ public class GameControllerScript : MonoBehaviour
 	public void StartProjectClicked() {
 		uiController.ShowProjectPhase ();
 		phase = Phase.Project;
+
+		foreach (WorkerController w in employeeWorkerControllers) {
+			w.InitiateInProjectPhase ();
+		}
 	}
 
 	public void AddWorkerClicked() {
 		SetAddingWorker (true);
 
-		workerBeingCreated = new Employee (EmployeeGenerator.GetRandomName (), EmployeeGenerator.GetRandomOccupation ());
-		uiController.ShowEmployeeData (workerBeingCreated);
-	}
+		employeeBeingCreated = new Employee (EmployeeGenerator.GetRandomName (), EmployeeGenerator.GetRandomOccupation ());
+		workerControllerBeingCreated = null;
 
-	private void GenerateWorkerDetails() {
-		
+		uiController.ShowEmployeeData (employeeBeingCreated);
 	}
 
 	public void DoneClicked() {
+		employeeWorkerControllers.Add (workerControllerBeingCreated);
+
 		SetAddingWorker (false);
 		uiController.HideEmployeeData ();
 	}
 
 	private void SetAddingWorker(bool addingWorker) {
-		this.addingWorker = addingWorker;
+		this.AddingWorker = addingWorker;
 		if (addingWorker) {
 			uiController.EnterAddingWorkerMode ();
 		} else {
 			uiController.ExitAddingWorkerMode ();
+		}
+	}
+
+	public void ObstacleClicked(Obstacle obstacle) {
+		if (AddingWorker) {
+			uiController.SetAddWorkerDoneButtonCancels (false);
+
+			Debug.Log ("Adding step");
+			employeeBeingCreated.AddRitualStep (obstacle);
+
+			if (employeeBeingCreated.RitualSteps.Count == 1) {
+				workerControllerBeingCreated = (Instantiate (cubePrefab, obstacle.targetLocation.position, Quaternion.identity) as GameObject).GetComponent<WorkerController>();
+				workerControllerBeingCreated.Employee = employeeBeingCreated;
+			}
+
+			uiController.ShowEmployeeData (employeeBeingCreated);
 		}
 	}
 }

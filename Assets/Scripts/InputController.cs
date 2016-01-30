@@ -4,12 +4,9 @@ using System.Collections;
 public class InputController : MonoBehaviour {
 
 	public Camera camera;
-	private GameControllerScript gameControllerScript;
 
-	// Use this for initialization
-	void Start () {
-		gameControllerScript = GetComponent<GameControllerScript> ();
-	}
+	private int layerMaskEmployees = 1 << 8;
+	private int layerMaskObstacles = 1 << 9;
 
 	// Update is called once per frame
 	void Update () {
@@ -17,16 +14,24 @@ public class InputController : MonoBehaviour {
 			RaycastHit hit;
 			Ray ray = camera.ScreenPointToRay(Input.mousePosition);
 
-			if (Physics.Raycast(ray, out hit, 1000f, (1 << 8))) {
+
+			if (Physics.Raycast (ray, out hit, 1000f, layerMaskEmployees)) {
 				GameObject objectHit = hit.transform.gameObject;
-				Debug.Log (objectHit.name);
-				ClickListener clickListener = objectHit.GetComponent<ClickListener> ();
-				if (clickListener != null) {
-					
-					var routineChanged = clickListener.OnClick ();
+				WorkerController worker = objectHit.GetComponent<WorkerController> ();
+				if (worker != null) {
+					worker.OnClick ();
+				}
+			} else if (Physics.Raycast (ray, out hit, 1000f, layerMaskObstacles)) {
+				GameObject objectHit = hit.transform.gameObject;
+				Obstacle obstacle = objectHit.GetComponent<Obstacle> ();
 
-					gameControllerScript.ObjectClickedByPlayer (routineChanged);
+				// check parent for obstacle component
+				if (obstacle == null) {
+					obstacle = objectHit.GetComponentInParent<Obstacle> ();
+				}
 
+				if (obstacle != null) {
+					obstacle.OnClick ();
 				}
 			}
 
