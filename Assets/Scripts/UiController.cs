@@ -30,6 +30,8 @@ public class UiController : MonoBehaviour {
 	public Text progressText;
 	public Image progressBar;
 
+	public bool DoneButtonCancels = true;
+
 	public const int targetScore = 1000;
 	private int currentGameScore = 0;
 
@@ -101,10 +103,19 @@ public class UiController : MonoBehaviour {
 	}
 
 	public void SetAddWorkerDoneButtonCancels(bool cancels) {
+		DoneButtonCancels = cancels;
 		if (cancels) {
 			doneAddingWorkerButtonText.text = "CANCEL";
 		} else {
 			doneAddingWorkerButtonText.text = "DONE";
+		}
+	}
+
+	public void SetCanCompleteAddingWorker(bool canComplete) {
+		if (canComplete || DoneButtonCancels) {
+			doneAddingWorkerButton.gameObject.SetActive (true);
+		} else {
+			doneAddingWorkerButton.gameObject.SetActive (false);
 		}
 	}
 
@@ -155,6 +166,7 @@ public class UiController : MonoBehaviour {
 		doneAddingWorkerButton.gameObject.SetActive (true);
 
 		SetAddWorkerDoneButtonCancels (true);
+		SetCanCompleteAddingWorker (false);
 	}
 
 	public void ExitAddingWorkerMode () {

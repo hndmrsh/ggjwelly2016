@@ -110,7 +110,7 @@ public class WorkerController : MonoBehaviour {
 			//		transform.position = wayPoints [0]; // Set the starting transform of this object
 
 		currentDestination = wayPoints [nextPoint];
-		chanceToChangeRoutine += (workerCount / 100); // More employees = bigger chance of being distracted
+		chanceToChangeRoutine += (workerCount / 100f); // More employees = bigger chance of being distracted
 	}
 
 	IEnumerator WaitAtLocation() {
@@ -131,7 +131,7 @@ public class WorkerController : MonoBehaviour {
 			localObstacles [i] = obstacles [i];
 		}
 
-		int end = localObstacles.Length-1;
+		int end = localObstacles.Length;
 
 		for (int i = 0; i < wayPoints.Count; i++) {
 			int randomPointNumber = Random.Range (0, end);
@@ -158,6 +158,7 @@ public class WorkerController : MonoBehaviour {
 	{
 		wayPoints = originalWayPoints;
 		routineChanged = false;
+		currentDestination = wayPoints [Mathf.Abs((nextPoint - 1) % wayPoints.Count)];
 		//routinesCompleted = 0;
 	}
 
@@ -196,7 +197,7 @@ public class WorkerController : MonoBehaviour {
 		speechShowingTime = 0f;
 	}
 		
-	private void DismissSpeech() {
+	public void DismissSpeech() {
 		yesSpeech.SetActive (false);
 		noSpeech.SetActive (false);
 	}

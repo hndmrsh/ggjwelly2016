@@ -27,7 +27,7 @@ public class GameControllerScript : MonoBehaviour
 
 	private float previousTime = 0f; // Keeps track of difference between previous 'day' and total time. If > than interval, day has past
 	private float totalTime = 0f; // Keeps track of total time progressed
-	public float dayTimeInterval = 2f;
+	public float dayTimeInterval = 1f;
 
 
 	// Variables to keep track of the "level" or difficulty of project
@@ -66,8 +66,9 @@ public class GameControllerScript : MonoBehaviour
 		ProjectFinished = false;
 		AddingWorker = false;
 
-		dayTimeInterval = 2f;
+		dayTimeInterval = 1f;
 
+		DetermineDatesForNewProject (); // Sets up the dates for the new project
 	}
 
 	void Update() {
@@ -117,8 +118,10 @@ public class GameControllerScript : MonoBehaviour
 	private void ProjectOver(bool completed) {
 		ProjectFinished = true;
 
+		uiController.ShowStartProjectButton (false);
 
 		foreach (var worker in employeeWorkerControllers) {
+			worker.DismissSpeech ();
 			Destroy (worker.gameObject);
 		}
 	
@@ -213,8 +216,6 @@ public class GameControllerScript : MonoBehaviour
 		bg1Audio.Play ();
 		bg2Audio.Play ();
 
-		DetermineDatesForNewProject (); // Sets up the dates for the new project
-
 	}
 
 	public void AddWorkerClicked() {
@@ -227,15 +228,18 @@ public class GameControllerScript : MonoBehaviour
 	}
 
 	public void DoneClicked() {
-		employeeWorkerControllers.Add (workerControllerBeingCreated);
+		if (!uiController.DoneButtonCancels) {
+			employeeWorkerControllers.Add (workerControllerBeingCreated);
 
-		foreach (Transform childTransform in pointMarkerGroup) {
-			Destroy (childTransform.gameObject);
+			foreach (Transform childTransform in pointMarkerGroup) {
+				Destroy (childTransform.gameObject);
+			}
+
+			uiController.ShowStartProjectButton (true);
 		}
 
 		SetAddingWorker (false);
 		uiController.HideEmployeeData ();
-		uiController.ShowStartProjectButton (true);
 	}
 
 	private void SetAddingWorker(bool addingWorker) {
@@ -249,8 +253,9 @@ public class GameControllerScript : MonoBehaviour
 
 	public void ObstacleClicked(Obstacle obstacle) {
 		if (AddingWorker) {
-			uiController.SetAddWorkerDoneButtonCancels (false);
 			bool canAdd = true;
+			uiController.SetAddWorkerDoneButtonCancels (false);
+			uiController.SetCanCompleteAddingWorker (false);
 
 			foreach (var existingObstacle in employeeBeingCreated.RitualSteps) {
 				if (obstacle == existingObstacle) {
@@ -268,6 +273,7 @@ public class GameControllerScript : MonoBehaviour
 				} else {
 					AddPathBetween (employeeBeingCreated.RitualSteps [employeeBeingCreated.RitualSteps.Count - 2].targetLocation.position, 
 						employeeBeingCreated.RitualSteps [employeeBeingCreated.RitualSteps.Count - 1].targetLocation.position);
+					uiController.SetCanCompleteAddingWorker (true);
 				}
 
 				uiController.ShowEmployeeData (employeeBeingCreated);
