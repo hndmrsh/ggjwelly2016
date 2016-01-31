@@ -6,11 +6,8 @@ using System.Collections.Generic;
 
 public class WorkerController : MonoBehaviour {
 
-	//private RulesGenerator ruleGenerator; // Get a reference to the script that produces that locations we want to move towards
 	private GameObject gameController;
 	private GameControllerScript gameControllerScript;
-
-	//public GameObject map;
 
 	private GameObject map; 
 	public int minRules = 3;
@@ -28,7 +25,13 @@ public class WorkerController : MonoBehaviour {
 	private bool waiting = false;
 	private float chanceToChangeRoutine = 0.1f;
 
+	public GameObject yesSpeech;
+	public GameObject noSpeech;
+	private float speechShowingTime = 2f;
+	private const float timeToShowSpeech = 2f;
+
 	public Employee Employee { get; set; }
+	Obstacle[] obstacles;
 
 	[HideInInspector]public int routinesCompleted = 0;
 	[HideInInspector]public bool routineChanged = false;
@@ -43,6 +46,7 @@ public class WorkerController : MonoBehaviour {
 		Vector3 scale = map.transform.localScale;
 		mapXSize = scale.x;
 		mapYSize = scale.y;
+		obstacles  = gameControllerScript.allObstacles;
 	}
 
 	// Update is called once per frame
@@ -65,7 +69,7 @@ public class WorkerController : MonoBehaviour {
 
 				// Random chance to go off task
 				if (chanceToChangeRoutine > Random.value) {
-					// Do something
+					ChangeRoutineDrastically ();
 					routineChanged = true;
 				}
 
@@ -78,6 +82,12 @@ public class WorkerController : MonoBehaviour {
 			}
 		}
 
+		if (speechShowingTime < timeToShowSpeech) {
+			speechShowingTime += Time.deltaTime;
+			if (speechShowingTime >= timeToShowSpeech) {
+				DismissSpeech();
+			}
+		}
 	}
 
 	public void InitiateInProjectPhase(int workerCount) {
@@ -110,20 +120,31 @@ public class WorkerController : MonoBehaviour {
 
 	public void ChangeRoutineDrastically() 
 	{
-//		wayPoints = ConvertToWayPoints(GenerateRulesForCube ()); // Generate a completely new set of locations
-//
-//		routineChanged = true;
-//		routinesCompleted = 0;
+		Obstacle[] localObstacles = new Obstacle [obstacles.Length];
+
+		for (int i = 0; i < obstacles.Length; i++) {
+			localObstacles [i] = obstacles [i];
+		}
+
+		int end = localObstacles.Length-1;
+
+		for (int i = 0; i < wayPoints.Count; i++) {
+			int randomPointNumber = Random.Range (0, end);
+			var newPointPosition = localObstacles [randomPointNumber].transform.position;
+			wayPoints[i] = new Vector3(newPointPosition.x, wayPoints[i].y, newPointPosition.z);
+
+			localObstacles [randomPointNumber] = localObstacles [(end - 1)];
+			end--;
+		}
+			
 	}
 
 	public void ChangeRoutineMinor() 
 	{
-
-//		var newWayPoints = ConvertToWayPoints(GenerateRulesForCube ()); // Generate a new set
 //
-//		var randomPosition = Random.Range (0, newWayPoints.Count); // Figure out which of our way points we'll change
+//		var randomPosition = Random.Range (0, passedInArray.Count); // Figure out which of our way points we'll change
 //
-//		wayPoints [randomPosition] = newWayPoints [randomPosition]; // Change one waypoint
+//		wayPoints [randomPosition] = passedInArray [randomPosition]; // Change one waypoint
 //
 //		routineChanged = true;
 //		routinesCompleted = 0;
@@ -144,11 +165,36 @@ public class WorkerController : MonoBehaviour {
 	public void OnClick() 
 	{
 		// Must do this first, as ReturnToOriginalRoutine reverts routineChanged to false
-		gameControllerScript.ObjectClickedByPlayer (routineChanged);
+		if (gameControllerScript.CurrentPhase == GameControllerScript.Phase.Project && gameControllerScript.ProjectFinished == false) {
+			if (routineChanged == true) {
+				UpdateScore (10);
+				ShowYesSpeech ();
+			} else {
+				UpdateScore (-10);
+				ShowNoSpeech ();
+			}
+		}
 
 		if (routineChanged) {
 			ReturnToOriginalRoutine ();
 		} 
+	}
+
+	private void ShowYesSpeech() {
+		yesSpeech.SetActive (true);
+		noSpeech.SetActive (false);
+		speechShowingTime = 0f;
+	}
+
+	private void ShowNoSpeech() {
+		yesSpeech.SetActive (false);
+		noSpeech.SetActive (true);
+		speechShowingTime = 0f;
+	}
+		
+	private void DismissSpeech() {
+		yesSpeech.SetActive (false);
+		noSpeech.SetActive (false);
 	}
 
 }

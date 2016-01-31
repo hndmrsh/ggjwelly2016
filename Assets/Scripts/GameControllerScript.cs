@@ -12,6 +12,8 @@ public class GameControllerScript : MonoBehaviour
 		
 	public bool interrupt;
 
+	public Obstacle[] allObstacles;
+
 	public GameObject cubePrefab;
 	public GameObject pointMarkerPrefab;
 	public Transform pointMarkerGroup;
@@ -21,27 +23,30 @@ public class GameControllerScript : MonoBehaviour
 	public float waitTimeMax = 15f;
 	public int numberOfRoutinesBeforeChange = 3;
 	public UiController uiController;
-	public int daysAwayFromDeadlineInitialiser = 30;
+	public int daysAwayFromDeadlineInitialiser = 28;
 
 	private float previousTime = 0f; // Keeps track of difference between previous 'day' and total time. If > than interval, day has past
 	private float totalTime = 0f; // Keeps track of total time progressed
-	public float dayTimeInterval = 3f;
+	public float dayTimeInterval = 2f;
 
 
 	// Variables to keep track of the "level" or difficulty of project
 	private DateTime projectStartDate;
 	private DateTime projectDueDate;
 	private DateTime projectCurrentDate;
+	private DateTime projectEstimatedFinishDate;
 	private int projectScore = 0;
 	private int projectLevel = 1;
-	private bool projectFinished = false;
+	public bool ProjectFinished { get; set; }
 
-	public const int projectTargetScore = 200;
+	public const int initialScore = 200;
+	public int projectTargetScore = 200;
+	public int projectTargetScoreIncrement = 10;
 
 	private int projectTimeToComplete; // Maybe useful
 	private int projectTimeElapsed; // Maybe useful
 
-	private Phase phase;
+	public Phase CurrentPhase { get; set; }
 
 	private List<WorkerController> employeeWorkerControllers = new List<WorkerController> ();
 
@@ -50,19 +55,23 @@ public class GameControllerScript : MonoBehaviour
 	private Employee employeeBeingCreated;
 	private WorkerController workerControllerBeingCreated;
 
+	public AudioSource musicAudio;
+	public AudioSource bg1Audio;
+	public AudioSource bg2Audio;
+
 	// Use this for initialization
 	void Start () 
 	{
-		phase = Phase.Hiring;
-
+		CurrentPhase = Phase.Hiring;
+		ProjectFinished = false;
 		AddingWorker = false;
 
-		dayTimeInterval = 3f;
+		dayTimeInterval = 2f;
 
 	}
 
 	void Update() {
-		if (projectFinished == false && phase == Phase.Project) {
+		if (ProjectFinished == false && CurrentPhase == Phase.Project) {
 
 			totalTime = Time.time;
 
@@ -74,24 +83,16 @@ public class GameControllerScript : MonoBehaviour
 		}
 
 	}
-		
-	// Remove this method? We need the onclick in the worker controller method, not here
-	public void ObjectClickedByPlayer(bool routineChanged) 
-	{
-		if (phase == Phase.Project && projectFinished == false) {
-			if (routineChanged == true) {
-				UpdateScore (10);
-			} else {
-				UpdateScore (-10);
-			}
-		}
-
-	}
 
 	public void UpdateScore(int scoreAmount) {
 		projectScore += scoreAmount;
 		uiController.UpdateScoreDisplay (projectScore, projectTargetScore);
 		CheckIfScoreReached ();
+	}
+
+	public void ResetScore() {
+		projectScore = 0;
+		uiController.UpdateScoreDisplay (projectScore, projectTargetScore);
 	}
 
 	private void DayElapsed() {
@@ -102,27 +103,115 @@ public class GameControllerScript : MonoBehaviour
 
 	public void CheckIfPastDueDate() {
 		if (projectCurrentDate > projectDueDate) {
-			uiController.ProjectFailed();
+			ProjectOver(false);
 		}
 	}
-
-
-
+		
 	private void CheckIfScoreReached() {
 		if (projectScore >= projectTargetScore) {
-			// Game is finished - update UI
-			projectFinished = true;
-			uiController.ProjectFinished();
+			ProjectOver(true);
 		}
 	}
+
+
+	private void ProjectOver(bool completed) {
+		ProjectFinished = true;
+
+
+		foreach (var worker in employeeWorkerControllers) {
+			Destroy (worker.gameObject);
+		}
+	
+
+		if (completed) {
+			uiController.ProjectFinished (); 		// level is won - update UI
+			projectLevel++;
+			projectTargetScore += projectTargetScoreIncrement;
+		} else {
+			uiController.ProjectFailed ();
+			projectLevel = 1;
+			projectTargetScore = initialScore;
+		}
+
+		employeeWorkerControllers.Clear ();
+
+		ResetScore ();
+
+		DetermineDatesForNewProject ();
+
+		CurrentPhase = Phase.Hiring;
+		uiController.ShowHiringPhase ();
+
+		musicAudio.Play ();
+		bg1Audio.Stop ();
+		bg2Audio.Stop ();
+	}
+
+	/*
+	private void ProjectFailed() {
+		projectFinished = true;
+		uiController.ProjectFailed(); // Just logs to console
+
+		foreach (var worker in employeeWorkerControllers) {
+			Destroy (worker.gameObject);
+		}
+
+		employeeWorkerControllers.Clear ();
+
+		ResetScore ();
+
+		DetermineDatesForNewProject ();
+
+		phase = Phase.Hiring;
+		uiController.ShowHiringPhase ();
+
+	}
+
+*/
+	/*
+	private void ProjectCompleted() {
+		
+		projectFinished = true;
+		uiController.ProjectFinished(); 		// Game is finished - update UI
+
+		foreach (var worker in employeeWorkerControllers) {
+			Destroy (worker.gameObject);
+		}
+
+		employeeWorkerControllers.Clear ();
+
+		// Victory - moving to next level
+		projectLevel++;
+		//projectTargetScore += projectTargetScoreIncrement; // Make the score higher
+
+		ResetScore ();
+
+		DetermineDatesForNewProject ();
+
+		phase = Phase.Hiring;
+		uiController.ShowHiringPhase ();
+
+	}*/
+
+	/*
+	private void InitialiseGenericVariables() {
+		projectFinished = false;
+		phase = Phase.Project;
+		ResetScore ();
+	}*/
 
 	public void StartProjectClicked() {
 		uiController.ShowProjectPhase ();
-		phase = Phase.Project;
+		CurrentPhase = Phase.Project;
+		ProjectFinished = false;
 
 		foreach (WorkerController w in employeeWorkerControllers) {
 			w.InitiateInProjectPhase (employeeWorkerControllers.Count);
 		}
+
+		musicAudio.Stop ();
+		bg1Audio.Play ();
+		bg2Audio.Play ();
 
 		DetermineDatesForNewProject (); // Sets up the dates for the new project
 
@@ -146,6 +235,7 @@ public class GameControllerScript : MonoBehaviour
 
 		SetAddingWorker (false);
 		uiController.HideEmployeeData ();
+		uiController.ShowStartProjectButton (true);
 	}
 
 	private void SetAddingWorker(bool addingWorker) {
@@ -160,19 +250,28 @@ public class GameControllerScript : MonoBehaviour
 	public void ObstacleClicked(Obstacle obstacle) {
 		if (AddingWorker) {
 			uiController.SetAddWorkerDoneButtonCancels (false);
+			bool canAdd = true;
 
-			Debug.Log ("Adding step");
-			employeeBeingCreated.AddRitualStep (obstacle);
-
-			if (employeeBeingCreated.RitualSteps.Count == 1) {
-				workerControllerBeingCreated = (Instantiate (cubePrefab, obstacle.targetLocation.position, Quaternion.identity) as GameObject).GetComponent<WorkerController> ();
-				workerControllerBeingCreated.Employee = employeeBeingCreated;
-			} else {
-				AddPathBetween (employeeBeingCreated.RitualSteps [employeeBeingCreated.RitualSteps.Count - 2].targetLocation.position, 
-					employeeBeingCreated.RitualSteps [employeeBeingCreated.RitualSteps.Count - 1].targetLocation.position);
+			foreach (var existingObstacle in employeeBeingCreated.RitualSteps) {
+				if (obstacle == existingObstacle) {
+					canAdd = false;
+				}
 			}
 
-			uiController.ShowEmployeeData (employeeBeingCreated);
+			if (canAdd) {
+				Debug.Log ("Adding step");
+				employeeBeingCreated.AddRitualStep (obstacle);
+
+				if (employeeBeingCreated.RitualSteps.Count == 1) {
+					workerControllerBeingCreated = (Instantiate (cubePrefab, obstacle.targetLocation.position, Quaternion.identity) as GameObject).GetComponent<WorkerController> ();
+					workerControllerBeingCreated.Employee = employeeBeingCreated;
+				} else {
+					AddPathBetween (employeeBeingCreated.RitualSteps [employeeBeingCreated.RitualSteps.Count - 2].targetLocation.position, 
+						employeeBeingCreated.RitualSteps [employeeBeingCreated.RitualSteps.Count - 1].targetLocation.position);
+				}
+
+				uiController.ShowEmployeeData (employeeBeingCreated);
+			}
 		}
 	}
 
@@ -189,10 +288,11 @@ public class GameControllerScript : MonoBehaviour
 	private void DetermineDatesForNewProject() {
 		projectStartDate = DateTime.Now;
 		projectCurrentDate = projectStartDate;
-		projectDueDate = projectStartDate.AddDays (daysAwayFromDeadlineInitialiser - projectLevel);
+		projectDueDate = projectStartDate.AddDays (daysAwayFromDeadlineInitialiser - (2 * projectLevel));
+		projectEstimatedFinishDate = projectDueDate.AddDays (-3);
 
 		// Project time to finish means nothing right now
-		uiController.SetProjectLevelInformation (projectLevel, 200, projectStartDate, projectDueDate);
+		uiController.SetProjectLevelInformation (projectLevel, projectStartDate, projectDueDate, projectEstimatedFinishDate);
 
 	}
 
