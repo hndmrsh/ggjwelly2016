@@ -39,9 +39,9 @@ public class GameControllerScript : MonoBehaviour
 	private int projectLevel = 1;
 	public bool ProjectFinished { get; set; }
 
-	public const int intialScore = 200;
+	public const int initialScore = 200;
 	public int projectTargetScore = 200;
-	public int projectTargetScoreIncrement = 50;
+	public int projectTargetScoreIncrement = 10;
 
 	private int projectTimeToComplete; // Maybe useful
 	private int projectTimeElapsed; // Maybe useful
@@ -122,9 +122,11 @@ public class GameControllerScript : MonoBehaviour
 		if (completed) {
 			uiController.ProjectFinished (); 		// level is won - update UI
 			projectLevel++;
+			projectTargetScore += projectTargetScoreIncrement;
 		} else {
 			uiController.ProjectFailed ();
 			projectLevel = 1;
+			projectTargetScore = initialScore;
 		}
 
 		employeeWorkerControllers.Clear ();

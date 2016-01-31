@@ -31,6 +31,7 @@ public class WorkerController : MonoBehaviour {
 	private const float timeToShowSpeech = 2f;
 
 	public Employee Employee { get; set; }
+	Obstacle[] obstacles;
 
 	[HideInInspector]public bool routineChanged = false;
 
@@ -44,6 +45,7 @@ public class WorkerController : MonoBehaviour {
 		Vector3 scale = map.transform.localScale;
 		mapXSize = scale.x;
 		mapYSize = scale.y;
+		obstacles  = gameControllerScript.allObstacles;
 	}
 
 	// Update is called once per frame
@@ -66,7 +68,7 @@ public class WorkerController : MonoBehaviour {
 
 				// Random chance to go off task
 				if (chanceToChangeRoutine > Random.value) {
-					// Do something
+					ChangeRoutineDrastically ();
 					routineChanged = true;
 				}
 
@@ -115,10 +117,23 @@ public class WorkerController : MonoBehaviour {
 
 	public void ChangeRoutineDrastically() 
 	{
-//		wayPoints = ConvertToWayPoints(GenerateRulesForCube ()); // Generate a completely new set of locations
-//
-//		routineChanged = true;
-//		routinesCompleted = 0;
+		Obstacle[] localObstacles = new Obstacle [obstacles.Length];
+
+		for (int i = 0; i < obstacles.Length; i++) {
+			localObstacles [i] = obstacles [i];
+		}
+
+		int end = localObstacles.Length-1;
+
+		for (int i = 0; i < wayPoints.Count; i++) {
+			int randomPointNumber = Random.Range (0, end);
+			var newPointPosition = localObstacles [randomPointNumber].transform.position;
+			wayPoints[i] = new Vector3(newPointPosition.x, wayPoints[i].y, newPointPosition.z);
+
+			localObstacles [randomPointNumber] = localObstacles [(end - 1)];
+			end--;
+		}
+			
 	}
 
 	public void ChangeRoutineMinor() 
