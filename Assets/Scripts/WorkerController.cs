@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 
 public class WorkerController : MonoBehaviour {
-
+	
 	private GameObject gameController;
 	private GameControllerScript gameControllerScript;
 
@@ -135,13 +135,12 @@ public class WorkerController : MonoBehaviour {
 
 		for (int i = 0; i < wayPoints.Count; i++) {
 			int randomPointNumber = Random.Range (0, end);
-			var newPointPosition = localObstacles [randomPointNumber].transform.parent.position;
-			wayPoints[i] = new Vector3(newPointPosition.x, wayPoints[i].y, newPointPosition.z);
+			var newPointPosition = localObstacles [randomPointNumber].GetComponent<Obstacle>().targetLocation.position;
+			wayPoints[i] = new Vector3(newPointPosition.x, newPointPosition.y, newPointPosition.z);
 
 			localObstacles [randomPointNumber] = localObstacles [(end - 1)];
 			end--;
 		}
-			
 	}
 
 	public void ChangeRoutineMinor() 
