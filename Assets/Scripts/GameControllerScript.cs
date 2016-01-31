@@ -55,6 +55,10 @@ public class GameControllerScript : MonoBehaviour
 	private Employee employeeBeingCreated;
 	private WorkerController workerControllerBeingCreated;
 
+	public AudioSource musicAudio;
+	public AudioSource bg1Audio;
+	public AudioSource bg2Audio;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -135,6 +139,10 @@ public class GameControllerScript : MonoBehaviour
 
 		CurrentPhase = Phase.Hiring;
 		uiController.ShowHiringPhase ();
+
+		musicAudio.Play ();
+		bg1Audio.Stop ();
+		bg2Audio.Stop ();
 	}
 
 	/*
@@ -198,6 +206,10 @@ public class GameControllerScript : MonoBehaviour
 		foreach (WorkerController w in employeeWorkerControllers) {
 			w.InitiateInProjectPhase (employeeWorkerControllers.Count);
 		}
+
+		musicAudio.Stop ();
+		bg1Audio.Play ();
+		bg2Audio.Play ();
 
 		DetermineDatesForNewProject (); // Sets up the dates for the new project
 
