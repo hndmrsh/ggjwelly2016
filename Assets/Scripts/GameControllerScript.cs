@@ -132,8 +132,8 @@ public class GameControllerScript : MonoBehaviour
 			projectTargetScore += projectTargetScoreIncrement;
 		} else {
 			uiController.ProjectFailed ();
-			projectLevel = 1;
-			projectTargetScore = initialScore;
+			//projectLevel = 1;
+			//projectTargetScore = initialScore;
 		}
 
 		employeeWorkerControllers.Clear ();
@@ -149,59 +149,7 @@ public class GameControllerScript : MonoBehaviour
 		bg1Audio.Stop ();
 		bg2Audio.Stop ();
 	}
-
-	/*
-	private void ProjectFailed() {
-		projectFinished = true;
-		uiController.ProjectFailed(); // Just logs to console
-
-		foreach (var worker in employeeWorkerControllers) {
-			Destroy (worker.gameObject);
-		}
-
-		employeeWorkerControllers.Clear ();
-
-		ResetScore ();
-
-		DetermineDatesForNewProject ();
-
-		phase = Phase.Hiring;
-		uiController.ShowHiringPhase ();
-
-	}
-
-*/
-	/*
-	private void ProjectCompleted() {
 		
-		projectFinished = true;
-		uiController.ProjectFinished(); 		// Game is finished - update UI
-
-		foreach (var worker in employeeWorkerControllers) {
-			Destroy (worker.gameObject);
-		}
-
-		employeeWorkerControllers.Clear ();
-
-		// Victory - moving to next level
-		projectLevel++;
-		//projectTargetScore += projectTargetScoreIncrement; // Make the score higher
-
-		ResetScore ();
-
-		DetermineDatesForNewProject ();
-
-		phase = Phase.Hiring;
-		uiController.ShowHiringPhase ();
-
-	}*/
-
-	/*
-	private void InitialiseGenericVariables() {
-		projectFinished = false;
-		phase = Phase.Project;
-		ResetScore ();
-	}*/
 
 	public void StartProjectClicked() {
 		uiController.ShowProjectPhase ();
