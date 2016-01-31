@@ -36,6 +36,8 @@ public class WorkerController : MonoBehaviour {
 	[HideInInspector]public int routinesCompleted = 0;
 	[HideInInspector]public bool routineChanged = false;
 
+	public Animator animation;	
+
 	// Use this for initialization
 
 	void Start() 
@@ -47,6 +49,7 @@ public class WorkerController : MonoBehaviour {
 		mapXSize = scale.x;
 		mapYSize = scale.y;
 		obstacles  = gameControllerScript.allObstacles;
+		animation = GetComponent<Animator>();
 	}
 
 	// Update is called once per frame
@@ -55,13 +58,15 @@ public class WorkerController : MonoBehaviour {
 		// Move to currentPoint
 		if (nextPoint < wayPoints.Count && waiting == false) 
 		{
-			transform.position = Vector3.MoveTowards(transform.position, currentDestination, Time.deltaTime * moveSpeed);
+			transform.parent.position = Vector3.MoveTowards(transform.parent.position, currentDestination, Time.deltaTime * moveSpeed);
+//			animation.SetBool("WalkingToTarget", true); 
 
-			if ((Mathf.Abs(transform.position.x - currentDestination.x) < 0.1) && (Mathf.Abs(transform.position.z - currentDestination.z) < 0.1)) 
+			if ((Mathf.Abs(transform.parent.position.x - currentDestination.x) < 0.1) && (Mathf.Abs(transform.parent.position.z - currentDestination.z) < 0.1)) 
 			{
 				nextPoint++;
 				waiting = true;
 				StartCoroutine(WaitAtLocation ());
+				//animation.SetBool("WalkingToTarget", false);
 
 				if (routineChanged == false) {
 					UpdateScore (scoreAmount);
@@ -130,7 +135,7 @@ public class WorkerController : MonoBehaviour {
 
 		for (int i = 0; i < wayPoints.Count; i++) {
 			int randomPointNumber = Random.Range (0, end);
-			var newPointPosition = localObstacles [randomPointNumber].transform.position;
+			var newPointPosition = localObstacles [randomPointNumber].transform.parent.position;
 			wayPoints[i] = new Vector3(newPointPosition.x, wayPoints[i].y, newPointPosition.z);
 
 			localObstacles [randomPointNumber] = localObstacles [(end - 1)];
