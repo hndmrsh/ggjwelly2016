@@ -39,9 +39,9 @@ public class GameControllerScript : MonoBehaviour
 	private int projectLevel = 1;
 	public bool ProjectFinished { get; set; }
 
-	public const int intialScore = 200;
+	public const int initialScore = 200;
 	public int projectTargetScore = 200;
-	public int projectTargetScoreIncrement = 50;
+	public int projectTargetScoreIncrement = 10;
 
 	private int projectTimeToComplete; // Maybe useful
 	private int projectTimeElapsed; // Maybe useful
@@ -126,9 +126,11 @@ public class GameControllerScript : MonoBehaviour
 		if (completed) {
 			uiController.ProjectFinished (); 		// level is won - update UI
 			projectLevel++;
+			projectTargetScore += projectTargetScoreIncrement;
 		} else {
 			uiController.ProjectFailed ();
 			projectLevel = 1;
+			projectTargetScore = initialScore;
 		}
 
 		employeeWorkerControllers.Clear ();
@@ -248,19 +250,28 @@ public class GameControllerScript : MonoBehaviour
 	public void ObstacleClicked(Obstacle obstacle) {
 		if (AddingWorker) {
 			uiController.SetAddWorkerDoneButtonCancels (false);
+			bool canAdd = true;
 
-			Debug.Log ("Adding step");
-			employeeBeingCreated.AddRitualStep (obstacle);
-
-			if (employeeBeingCreated.RitualSteps.Count == 1) {
-				workerControllerBeingCreated = (Instantiate (cubePrefab, obstacle.targetLocation.position, Quaternion.identity) as GameObject).GetComponent<WorkerController> ();
-				workerControllerBeingCreated.Employee = employeeBeingCreated;
-			} else {
-				AddPathBetween (employeeBeingCreated.RitualSteps [employeeBeingCreated.RitualSteps.Count - 2].targetLocation.position, 
-					employeeBeingCreated.RitualSteps [employeeBeingCreated.RitualSteps.Count - 1].targetLocation.position);
+			foreach (var existingObstacle in employeeBeingCreated.RitualSteps) {
+				if (obstacle == existingObstacle) {
+					canAdd = false;
+				}
 			}
 
-			uiController.ShowEmployeeData (employeeBeingCreated);
+			if (canAdd) {
+				Debug.Log ("Adding step");
+				employeeBeingCreated.AddRitualStep (obstacle);
+
+				if (employeeBeingCreated.RitualSteps.Count == 1) {
+					workerControllerBeingCreated = (Instantiate (cubePrefab, obstacle.targetLocation.position, Quaternion.identity) as GameObject).GetComponent<WorkerController> ();
+					workerControllerBeingCreated.Employee = employeeBeingCreated;
+				} else {
+					AddPathBetween (employeeBeingCreated.RitualSteps [employeeBeingCreated.RitualSteps.Count - 2].targetLocation.position, 
+						employeeBeingCreated.RitualSteps [employeeBeingCreated.RitualSteps.Count - 1].targetLocation.position);
+				}
+
+				uiController.ShowEmployeeData (employeeBeingCreated);
+			}
 		}
 	}
 
