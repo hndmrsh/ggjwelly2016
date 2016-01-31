@@ -263,7 +263,7 @@ public class GameControllerScript : MonoBehaviour
 				employeeBeingCreated.AddRitualStep (obstacle);
 
 				if (employeeBeingCreated.RitualSteps.Count == 1) {
-					workerControllerBeingCreated = (Instantiate (cubePrefab, obstacle.targetLocation.position, Quaternion.identity) as GameObject).GetComponent<WorkerController> ();
+					workerControllerBeingCreated = (Instantiate (cubePrefab, obstacle.targetLocation.position, Quaternion.identity) as GameObject).GetComponentInChildren<WorkerController> ();
 					workerControllerBeingCreated.Employee = employeeBeingCreated;
 				} else {
 					AddPathBetween (employeeBeingCreated.RitualSteps [employeeBeingCreated.RitualSteps.Count - 2].targetLocation.position, 
