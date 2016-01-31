@@ -30,6 +30,7 @@ public class WorkerController : MonoBehaviour {
 
 	public Employee Employee { get; set; }
 
+	[HideInInspector]public int routinesCompleted = 0;
 	[HideInInspector]public bool routineChanged = false;
 
 	// Use this for initialization
@@ -88,6 +89,8 @@ public class WorkerController : MonoBehaviour {
 		foreach (var originalWayPoint in wayPoints) {
 			originalWayPoints.Add (originalWayPoint);
 		}
+				
+				
 
 			//		transform.position = wayPoints [0]; // Set the starting transform of this object
 
