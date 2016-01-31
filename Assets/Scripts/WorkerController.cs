@@ -33,6 +33,8 @@ public class WorkerController : MonoBehaviour {
 	[HideInInspector]public int routinesCompleted = 0;
 	[HideInInspector]public bool routineChanged = false;
 
+	public Animator animation;	
+
 	// Use this for initialization
 
 	void Start() 
@@ -43,6 +45,8 @@ public class WorkerController : MonoBehaviour {
 		Vector3 scale = map.transform.localScale;
 		mapXSize = scale.x;
 		mapYSize = scale.y;
+
+		animation = GetComponent<Animator>();
 	}
 
 	// Update is called once per frame
@@ -52,12 +56,14 @@ public class WorkerController : MonoBehaviour {
 		if (nextPoint < wayPoints.Count && waiting == false) 
 		{
 			transform.position = Vector3.MoveTowards(transform.position, currentDestination, Time.deltaTime * moveSpeed);
+//			animation.SetBool("WalkingToTarget", true); 
 
 			if ((Mathf.Abs(transform.position.x - currentDestination.x) < 0.1) && (Mathf.Abs(transform.position.z - currentDestination.z) < 0.1)) 
 			{
 				nextPoint++;
 				waiting = true;
 				StartCoroutine(WaitAtLocation ());
+				//animation.SetBool("WalkingToTarget", false);
 
 				if (routineChanged == false) {
 					UpdateScore (scoreAmount);
